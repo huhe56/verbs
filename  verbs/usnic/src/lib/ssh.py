@@ -4,7 +4,7 @@ Created on Aug 8, 2013
 @author: huhe
 '''
 
-import pexpect, sys
+import pexpect, sys, re 
 
 from main.define import Define
 from lib.util import Util
@@ -62,6 +62,16 @@ class SSH(object):
             self._session.expect(self._pattern_prompt, timeout)
         else:
             self._session.expect(self._pattern_prompt)
+        
+    
+    def send_match_list(self, cmd, pattern, timeout=None):        
+        self.send_expect_prompt(cmd)
+        output = self.get_output()
+        #self._logger.debug(output)
+        re_pattern = re.compile(pattern)
+        match_list = re_pattern.findall(output)
+        #self._logger.debug(match_list)
+        return match_list
         
         
     def flush(self):
