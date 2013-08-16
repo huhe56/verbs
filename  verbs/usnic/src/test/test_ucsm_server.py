@@ -6,7 +6,6 @@ Created on Aug 8, 2013
 
 
 from main.define import Define
-from lib.ucsm import UCSM
 from lib.ucsm_server import UcsmServer
 
 
