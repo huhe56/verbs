@@ -5,7 +5,6 @@ Created on Aug 8, 2013
 '''
 
 
-from lib.node_head import NodeHead
 from lib.node_compute import NodeCompute
 
 
