@@ -15,5 +15,9 @@ class Base(object):
         '''
         Constructor
         '''
+        '''
+        cimc: ssh session to rack server cimc
+        ucsm: ssh session to ucsm
+        '''
         self._ssh = ssh
         
