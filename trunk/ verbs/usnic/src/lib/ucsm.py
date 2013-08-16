@@ -27,7 +27,16 @@ class UCSM(object):
     def get_ssh(self):
         return self._ssh
     
+    
+    def scope_top(self):
+        self._ssh.send_expect_prompt("terminal length 0")
+        self._ssh.send_expect_prompt("top")
         
+        
+    def show_cup_brief(self):
+        self.scope_top()
+        self._ssh.send_expect_prompt("show server cpu")
+        return self._ssh.get_output()
         
         
         
