@@ -6,11 +6,11 @@ Created on Aug 13, 2013
 
 from main.define import Define
 from lib.util import Util
-from lib.usnic import USNIC
+from lib.fw import FW
 from lib.ucsm import UCSM
 
 
-class UcsmServer(USNIC):
+class UcsmServer(FW):
     '''
     classdocs
     '''
@@ -24,7 +24,7 @@ class UcsmServer(USNIC):
         self._ucsm = ucsm
         self._chassis_index = chassis_index
         self._server_index = server_index
-        USNIC.__init__(self, ucsm.get_ssh())
+        FW.__init__(self, ucsm.get_ssh())
         
     
     @staticmethod
@@ -48,7 +48,7 @@ class UcsmServer(USNIC):
         self.scope_server(self._server_index)
 
 
-    def get_cpu_brief(self):
+    def show_cpu_brief(self):
         self.scope_server_from_top()
         self.send_expect_prompt("show cpu")
         self._logger.debug(self.get_output())
