@@ -18,10 +18,10 @@ if __name__ == '__main__':
         #output = ucsm_server.show_cpu_brief()
         print ucsm_server._service_profile
     
-    '''
+    
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     print "\n--------\n" + ucsm.show_cup_brief()
-    '''
+    
     
     
     
