@@ -26,17 +26,21 @@ class UcsmServer(FW):
         self._server_index = server_index
         FW.__init__(self, ucsm.get_ssh())
         
-    
+        self._service_profile = None
+        
+        
     @staticmethod
     def init_ucsm_server(ucsm_hostname):
         ucsm_server_list = []
         ucsm = UCSM(ucsm_hostname)
         for chassis_index in Define.UCSM_BLADE_SERVER_LIST:
-            for server_index in Define.UCSM_BLADE_SERVER_LIST[chassis_index]:
+            for server_index, service_profile in Define.UCSM_BLADE_SERVER_LIST[chassis_index].items():
                 blade_server = UcsmServer(ucsm, chassis_index, server_index)
+                blade_server.set_service_profile(service_profile)
                 ucsm_server_list.append(blade_server)
-        for server_index in Define.UCSM_RACK_SERVER_LIST:
+        for server_index, service_profile in Define.UCSM_RACK_SERVER_LIST.items():
             rack_server = UcsmServer(ucsm, None, server_index)
+            rack_server.set_service_profile(service_profile)
             ucsm_server_list.append(rack_server)
         return ucsm_server_list
     
@@ -52,6 +56,10 @@ class UcsmServer(FW):
         self.scope_server_from_top()
         self.send_expect_prompt("show cpu")
         self._logger.debug(self.get_output())
+        
+        
+    def set_service_profile(self, service_profile):
+        self._service_profile = service_profile
         
         
     

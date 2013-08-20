@@ -7,13 +7,14 @@ Created on Aug 8, 2013
 import pexpect, sys, re 
 
 from main.define import Define
+from lib.logger import MyLogger
 from lib.util import Util
 
 class SSH(object):
     '''
     classdocs
     '''
-    _logger = Util.getLogger('SSH')
+    _logger = MyLogger.getLogger('SSH')
     
 
     def __init__(self, hostname, username, password):
@@ -53,15 +54,15 @@ class SSH(object):
         
     
     def expect(self, pattern):
-        self._session.expect(pattern)
+        return self._session.expect(pattern)
         
         
     def send_expect_prompt(self, cmd, timeout=None):
         self._session.sendline(cmd)
         if timeout:
-            self._session.expect(self._pattern_prompt, timeout)
+            return self._session.expect(self._pattern_prompt, timeout)
         else:
-            self._session.expect(self._pattern_prompt)
+            return self._session.expect(self._pattern_prompt)
         
     
     def send_match_list(self, cmd, pattern, timeout=None):        
