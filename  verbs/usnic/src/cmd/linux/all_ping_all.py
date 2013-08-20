@@ -24,18 +24,21 @@ if __name__ == '__main__':
         node_list.append(node)
         if node.get_ssh(): 
             eth_if_list = node.get_eth_if_list()
+            node.exit_ssh()
             for eth_if in eth_if_list:
                 if eth_if.startswith("127.") or eth_if.startswith("192.168."): continue
                 subnet = str(ipaddr.IPv4Network(eth_if + "/24").network)
                 if subnet not in subnet_dict.keys():
                     subnet_dict[subnet] = []
                 subnet_dict[subnet].append(eth_if)
+            
                 
     pprint.pprint(subnet_dict)
     print "\n"
     
     summary = [0, 0, 0, 0]
     for node in node_list:
+        node.start_ssh()
         ssh = node.get_ssh()
         if not ssh:
             summary[1] = summary[1] + 1
@@ -55,15 +58,17 @@ if __name__ == '__main__':
                         else:
                             summary[3] = summary[3] + 1
                             print "Failed: ping " + ip + " from " + eth_if
-                         
+            node.exit_ssh()
+            
     print "\n\n== full mash ping result =="
-    for i in summary:
+    for i in range(len(summary)):
         if i == 0:
-            print "total node(s) can be ssh'ed to: " + summary[i]
+            print "total node(s) can be ssh'ed to: " + str(summary[i])
         elif i == 1:
-            print "total node(s) can not be ssh'ed to: " + summary[i]
+            print "total node(s) can not be ssh'ed to: " + str(summary[i])
         elif i == 2:
-            print "total ping(s) successful: " + summary[i]
+            print "total ping(s) successful: " + str(summary[i])
         elif i == 3:
-            print "total ping(s) failed: " + summary[i]
+            print "total ping(s) failed: " + str(summary[i])
         
+    print "\n"
