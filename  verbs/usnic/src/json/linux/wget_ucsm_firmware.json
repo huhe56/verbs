@@ -1,0 +1,7 @@
+[
+	{
+		"cmd":		"wget $Define.URL_IMAGE_LIST[$i] -P $Define.PATH_DOWNLOADS",
+		"for":		3,
+		"timeout":	60
+	}
+]
