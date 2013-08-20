@@ -6,6 +6,7 @@ Created on Aug 14, 2013
 
 import re
 
+from lib.logger import MyLogger
 from lib.util import Util
 from lib.ssh import SSH
 
@@ -20,7 +21,7 @@ class RedHat(object):
         '''
         Constructor
         '''
-        self._logger = Util.getLogger(self.__class__.__name__)
+        self._logger = MyLogger.getLogger(self.__class__.__name__)
         
         self._hostname = hostname
         self._username = username
@@ -28,6 +29,14 @@ class RedHat(object):
         self._ssh = SSH(hostname, username, password)
         
         self._eth_if_list = None
+        
+        
+    def get_ssh(self):
+        return self._ssh
+    
+    
+    def exit(self):
+        self._ssh.send("exit")
         
         
     def send_expect_prompt(self, cmd, timeout=None):
