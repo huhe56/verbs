@@ -4,7 +4,6 @@ Created on Aug 8, 2013
 @author: huhe
 '''
 
-import os
 import re
 import time
 import simplejson as json
@@ -12,6 +11,7 @@ import pexpect
 
 from main.define import Define
 from lib.logger import MyLogger
+from utils.utils import Utils
 
 
 class Util(object):
@@ -26,36 +26,28 @@ class Util(object):
         Constructor
         '''
 
-    @staticmethod
-    def read_file(filename):
-        fh =  open(filename, 'r')
-        content = fh.readlines()
-        fh.close
-        content = [line.replace("\n", "") for line in content]
-        return content
-
 
     @staticmethod
-    def write_file(filename, content): 
-        fh = open(filename, 'w')
-        fh.write(content)
-        fh.close
-    
+    def ping(ssh, ip, count):
+        ssh.send_expect_prompt("ping -c " + str(count) + " " + ip)
+        return Util.check_shell_status(ssh)
+        
+        
+    @staticmethod
+    def check_shell_status(ssh):
+        ssh.send("echo shell_status=$?")
+        ret_code = ssh.expect(["shell_status=0", "shell_status=1"])
+        if ret_code == 0: 
+            return True
+        else:
+            return False
+        
     
     @staticmethod
     def find_pattern_list(pattern, string):
         print pattern
         m = re.findall(pattern, string)
-        print "---------" 
         print m
-        
-        
-    @staticmethod
-    def set_prefix_zero_string(index):
-        if index < 10:
-            return "0" + str(index)
-        else:
-            return str(index)
         
         
     @staticmethod
@@ -123,4 +115,27 @@ class Util(object):
         
         
      
-        
+    @staticmethod
+    def get_node_name_list(path_config_file):
+        pattern1 = re.compile(r",")
+        pattern2 = re.compile("\[(?P<range>[0-9\-]+)\]")
+        pattern3 = re.compile(r"-")
+        node_list = []
+        line_list = Utils.read_file(path_config_file)
+        for line in line_list:
+            line.strip()
+            if line.startswith("#"): continue
+            if pattern1.search(line):
+                node_list_1 = pattern1.split(line)
+                node_list = node_list + node_list_1
+            elif pattern2.search(line):
+                m = pattern2.search(line)
+                rangex = m.group("range")
+                hostname_prefix = line.replace("[" + rangex + "]", "")
+                range_item_list = pattern3.split(rangex)
+                for i in range(int(range_item_list[0]), int(range_item_list[1])):
+                    hostname = hostname_prefix + str(i).zfill(2)
+                    node_list.append(hostname)
+            else:
+                node_list.append(line)
+        return sorted(node_list)

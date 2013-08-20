@@ -20,7 +20,6 @@ class UcsmServer(FW):
         '''
         Constructor
         '''
-        self._logger = Util.getLogger(self.__class__.__name__)
         self._ucsm = ucsm
         self._chassis_index = chassis_index
         self._server_index = server_index
