@@ -1,0 +1,12 @@
+[
+	{
+		"cmd":	"top"
+	},
+	{
+		"cmd":	"scope fireware"
+	},
+	{
+		"cmd":	"download image scp: Define.IMAGE_LIST[0] -P Define.PATH_DOWNLOADS"
+	}
+]
+	
