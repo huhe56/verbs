@@ -9,6 +9,7 @@ import time
 import simplejson as json
 import pexpect
 
+# Define is used, don't remove
 from main.define import Define
 from lib.logger import MyLogger
 from utils.utils import Utils
