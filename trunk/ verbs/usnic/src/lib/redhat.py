@@ -31,5 +31,9 @@ class RedHat(Base):
         return self._eth_if_list
         
         
-    
+    def start_ssh(self):
+        ssh = SSH(self._hostname, self._username, self._password)
+        self.set_ssh(ssh)
+        
+        
         

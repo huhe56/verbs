@@ -117,7 +117,7 @@ class Util(object):
      
     @staticmethod
     def get_node_name_list(path_config_file):
-        pattern1 = re.compile(r",")
+        pattern1 = re.compile("\s*\,\s*")
         pattern2 = re.compile("\[(?P<range>[0-9\-]+)\]")
         pattern3 = re.compile(r"-")
         node_list = []
