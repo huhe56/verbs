@@ -5,10 +5,11 @@ Created on Aug 13, 2013
 '''
 
 from main.define import Define
+from lib.base import Base
 from lib.ssh import SSH
 
 
-class UCSM(object):
+class UCSM(Base):
     '''
     classdocs
     '''
@@ -21,11 +22,8 @@ class UCSM(object):
         self._hostname = hostname
         self._username = username
         self._password = password
-        self._ssh = SSH(hostname, username, password)
+        Base.__init__(self, SSH(hostname, username, password))
 
-    
-    def get_ssh(self):
-        return self._ssh
     
     
     def scope_top(self):
@@ -33,7 +31,7 @@ class UCSM(object):
         self._ssh.send_expect_prompt("top")
         
         
-    def show_cup_brief(self):
+    def show_cpu_brief(self):
         self.scope_top()
         self._ssh.send_expect_prompt("show server cpu")
         return self._ssh.get_output()

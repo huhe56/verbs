@@ -4,6 +4,7 @@ Created on Aug 19, 2013
 @author: huhe
 '''
 
+import sys
 import pprint
 import ipaddr
 
@@ -13,6 +14,14 @@ from lib.node_compute import NodeCompute
 
     
 if __name__ == '__main__':
+    
+    if len(sys.argv) == 3:
+        node_usr = sys.argv[1]
+        node_pwd = sys.argv[2]
+    else:
+        node_usr = Define.NODE_DEFAULT_USERNAME
+        node_pwd = Define.NODE_DEFAULT_PASSWORD
+    
     path_config_file = Define.PATH_USNIC_CONFIG + "ping.cfg"
     node_name_list = Util.get_node_name_list(path_config_file)
     print node_name_list
@@ -20,7 +29,7 @@ if __name__ == '__main__':
     node_list = []
     subnet_dict = {}
     for node_name in node_name_list:
-        node = NodeCompute(node_name)
+        node = NodeCompute(node_name, node_usr, node_pwd)
         node_list.append(node)
         if node.get_ssh(): 
             eth_if_list = node.get_eth_if_list()

@@ -134,7 +134,7 @@ class Util(object):
                 rangex = m.group("range")
                 hostname_prefix = line.replace("[" + rangex + "]", "")
                 range_item_list = pattern3.split(rangex)
-                for i in range(int(range_item_list[0]), int(range_item_list[1])):
+                for i in range(int(range_item_list[0]), int(range_item_list[1])+1):
                     hostname = hostname_prefix + str(i).zfill(2)
                     node_list.append(hostname)
             else:

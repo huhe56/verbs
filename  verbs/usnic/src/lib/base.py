@@ -38,15 +38,7 @@ class Base(object):
             
     def exit_ssh(self):
         self._ssh.send("exit")
-        
-        
-    ### sendline and expect prompt wrapper
-    def send_expect_prompt(self, cmd, timeout=None):
-        self._ssh.send_expect_prompt(cmd, timeout)
-        
-        
-    def get_output(self):
-        return self._ssh.get_output()
+        self._ssh = None
     
     
     

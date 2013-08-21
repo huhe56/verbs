@@ -5,7 +5,6 @@ Created on Aug 13, 2013
 '''
 
 from main.define import Define
-from lib.util import Util
 from lib.fw import FW
 from lib.ucsm import UCSM
 
@@ -53,8 +52,8 @@ class UcsmServer(FW):
 
     def show_cpu_brief(self):
         self.scope_server_from_top()
-        self.send_expect_prompt("show cpu")
-        self._logger.debug(self.get_output())
+        self._ssh.send_expect_prompt("show cpu")
+        self._logger.debug(self._ssh.get_output())
         
         
     def set_service_profile(self, service_profile):

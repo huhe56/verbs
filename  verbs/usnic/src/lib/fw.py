@@ -4,12 +4,12 @@ Created on Aug 13, 2013
 @author: huhe
 '''
 
-import re
-
 from main.define import Define
 from lib.base import Base
 
-
+'''
+super class for cimc and ucsm server
+'''
 class FW(Base):
     '''
     classdocs
@@ -24,30 +24,30 @@ class FW(Base):
     
 
     def commit(self):
-        self.send_expect_prompt("commit", Define.TIMEOUT_COMMIT)
+        self._ssh.send_expect_prompt("commit", Define.TIMEOUT_COMMIT)
         
         
     def scope_top(self):
-        self.send_expect_prompt("top")
+        self._ssh.send_expect_prompt("top")
         
         
     def scope_chassis(self, chassis_index=None):
         if chassis_index:
-            self.send_expect_prompt("scope chassis " + str(chassis_index))
+            self._ssh.send_expect_prompt("scope chassis " + str(chassis_index))
         else:
-            self.send_expect_prompt("scope chassis")
+            self._ssh.send_expect_prompt("scope chassis")
         
         
     def scope_server(self, server_index):
-        self.send_expect_prompt("scope server " + str(server_index))
+        self._ssh.send_expect_prompt("scope server " + str(server_index))
         
         
     def scope_adapter(self, adapter_index):
-        self.send_expect_prompt("scope adapter " + str(adapter_index))
+        self._ssh.send_expect_prompt("scope adapter " + str(adapter_index))
         
     
     def scope_host_eth_if(self, host_eth_if):
-        self.send_expect_prompt("scope host-eth-if " + host_eth_if)
+        self._ssh.send_expect_prompt("scope host-eth-if " + host_eth_if)
     
     
     def scope_chassis_from_top(self):

@@ -24,8 +24,7 @@ class CIMC(FW):
         self._hostname = hostname
         self._username = username
         self._password = password
-        self._ssh = SSH(hostname, username, password)
-        FW.__init__(self, self._ssh)
+        FW.__init__(self, SSH(hostname, username, password))
         
         
     def scope_usnic(self):
@@ -45,27 +44,27 @@ class CIMC(FW):
         
     
     def create_usnic(self, host_eth_if, count):
-        self.send_expect_prompt("create host-eth-if " + host_eth_if)
+        self._ssh.send_expect_prompt("create host-eth-if " + host_eth_if)
         self.commit()
-        self.send_expect_prompt("create usnic-config 0")
+        self._ssh.send_expect_prompt("create usnic-config 0")
         self.set_count(count)
         
         
     def delete_usnic(self, host_eth_if):
-        self.send_expect_prompt("delete host-eth-if " + host_eth_if)
+        self._ssh.send_expect_prompt("delete host-eth-if " + host_eth_if)
         self.commit()
         
         
     def show_usnic_detail(self):
-        self.send_expect_prompt("show detail")
+        self._ssh.send_expect_prompt("show detail")
         
         
     def show_usnic_brief(self):
-        self.send_expect_prompt("show")
+        self._ssh.send_expect_prompt("show")
         
         
     def set_usnic_count(self, count):
-        self.send_expect_prompt("set usnic-count " + str(count))
+        self._ssh.send_expect_prompt("set usnic-count " + str(count))
         self.commit()
         
         
