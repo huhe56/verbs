@@ -51,6 +51,14 @@ class Util(object):
         print m
         
         
+    '''
+    cmd
+    expect
+    timeout
+    return:     save the matched string for future step to use
+    for:        loop the cmd multiple times
+    probe:      probe until pattern is expected
+    '''    
     @staticmethod
     def run_step_list(ssh, file_json_step):
         json_file = open(file_json_step)    
@@ -80,13 +88,13 @@ class Util(object):
         if "probe"  in step.keys(): step_probe  = step["probe"]
         if "expect" in step.keys(): step_expect = step["expect"]
         
-        cmd_str = ""
+        cmd_str = None
         cmd_item_list = re.compile("\s+").split(step_cmd)
         for cmd_item in cmd_item_list:
             if cmd_item.startswith("$"):
                 cmd_item = eval(cmd_item[1:])
-            if cmd_str == "": cmd_str = cmd_item
-            else: cmd_str = cmd_str + " " + cmd_item
+            if cmd_str : cmd_str = cmd_str + " " + cmd_item
+            else: cmd_str = cmd_item
         Util._logger.info(cmd_str)
         
         if step_probe:
@@ -114,13 +122,13 @@ class Util(object):
             if step_timeout:
                 if step_return:
                     ssh.expect(expect_list, step_timeout)
-                    return ssh.get_session().match.group()
+                    return ssh.get_match_object().group()
                 else:
                     return ssh.expect(expect_list, step_timeout)
             else:
                 if step_return:
                     ssh.expect(expect_list)
-                    return ssh.get_session().match.group()
+                    return ssh.get_match_object().group()
                 else:
                     return ssh.expect(expect_list)
         else:
@@ -160,14 +168,20 @@ class Util(object):
 
     @staticmethod
     def collect_ucsm_tech_support(ssh):
-        file_json_step = Define.PATH_USNIC_JSON_LINUX + "collect_ucsm_tech_support.json"
+        file_json_step = Define.PATH_USNIC_JSON_UCSM + "collect_ucsm_tech_support.json"
+        Util.run_step_list(ssh, file_json_step)
+        
+        
+    @staticmethod
+    def collect_chassis_tech_support(ssh):
+        file_json_step = Define.PATH_USNIC_JSON_UCSM + "collect_chassis_tech_support.json"
         Util.run_step_list(ssh, file_json_step)
         
         
     @staticmethod
     def collect_usnic_tech_support(ssh):
         file_json_step = Define.PATH_USNIC_JSON_LINUX + "collect_usnic_tech_support.json"
-        return Util.run_step_list(ssh, file_json_step)
+        Util.run_step_list(ssh, file_json_step)
         
         
         
