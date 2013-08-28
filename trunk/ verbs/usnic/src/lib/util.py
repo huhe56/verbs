@@ -57,6 +57,7 @@ class Util(object):
         step_list = json.load(json_file)
         json_file.close()
         
+        ret = None
         for step in step_list:
             step_cmd = step["cmd"]
             step_for = None
@@ -66,14 +67,14 @@ class Util(object):
                 for i in range(0, step_for):
                     step_cmd_i = step_cmd.replace("[$i]", "[" + str(i) + "]")
                     Util._logger.debug(step_cmd_i)
-                    Util.run_step(ssh, step_cmd_i, step)
+                    Util.run_step(ssh, step_cmd_i, step, ret)
             else:
                 Util._logger.debug(step_cmd)
-                return Util.run_step(ssh, step_cmd, step)
+                ret = Util.run_step(ssh, step_cmd, step, ret)
                     
                     
     @staticmethod
-    def run_step(ssh, step_cmd, step):
+    def run_step(ssh, step_cmd, step, ret=None):
         step_probe  = None
         step_expect = None
         if "probe"  in step.keys(): step_probe  = step["probe"]
@@ -84,7 +85,8 @@ class Util(object):
         for cmd_item in cmd_item_list:
             if cmd_item.startswith("$"):
                 cmd_item = eval(cmd_item[1:])
-            cmd_str = cmd_str + " " + cmd_item
+            if cmd_str == "": cmd_str = cmd_item
+            else: cmd_str = cmd_str + " " + cmd_item
         Util._logger.info(cmd_str)
         
         if step_probe:
