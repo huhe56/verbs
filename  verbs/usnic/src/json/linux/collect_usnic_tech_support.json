@@ -4,5 +4,14 @@
 		"expect":	"\\/tmp.+xz",
 		"timeout":	60,
 		"return":	"true"
+	},
+	
+	{
+		"cmd":		"scp $ret $Define.URL_NODE_CDETS_TECH_SUPPORT",
+		"expect":	"password"
+	},
+	
+	{
+		"cmd":		"$Define.CDEST_HUHE_PASSWORD"
 	}
 ]

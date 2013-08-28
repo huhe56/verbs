@@ -22,5 +22,5 @@ if __name__ == '__main__':
     
     compute_node = NodeCompute("node02", Define.NODE_USERNAME_ROOT, Define.NODE_DEFAULT_PASSWORD)
     ssh = compute_node.get_ssh()
-    file_tech_support = Util.collect_usnic_tech_support(ssh) 
-    print file_tech_support
+    Util.collect_usnic_tech_support(ssh) 
+    
