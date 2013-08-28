@@ -8,12 +8,22 @@
 	},
 	
 	{
-		"cmd": 		"show tech-support ucsm detail",
-		"expect": 	"completed",
-		"timeout": 	600
+		"cmd": 		"show tech-support chassis 1 all detail",
+		"expect": 	"workspace:.+tar",
+		"timeout": 	600,
+		"return":	"true"
 	},
 	
 	{
-		"cmd": 	"exit"
+		"cmd":		"copy $ret $Define.URL_UCSM_CDETS_TECH_SUPPORT",
+		"expect":	"password"
+	},
+	
+	{
+		"cmd":		"$Define.CDEST_HUHE_PASSWORD"
+	},
+	
+	{
+		"cmd":		"exit"
 	}
 ]

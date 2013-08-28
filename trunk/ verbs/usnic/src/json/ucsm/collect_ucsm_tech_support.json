@@ -15,6 +15,15 @@
 	},
 	
 	{
-		"cmd": 	"exit"
+		"cmd":		"copy $ret $Define.URL_UCSM_CDETS_TECH_SUPPORT",
+		"expect":	"password"
+	},
+	
+	{
+		"cmd":		"$Define.CDEST_HUHE_PASSWORD"
+	},
+	
+	{
+		"cmd":		"exit"
 	}
 ]

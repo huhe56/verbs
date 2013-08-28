@@ -104,7 +104,13 @@ class SSH(object):
         return self._session.before + self._session.after
     
     
+    def exit(self):
+        self.send("exit")
     
         
+    def get_match_object(self):
+        return self._session.match
+    
+    
         
             
