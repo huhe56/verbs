@@ -1,0 +1,19 @@
+[
+	{
+		"cmd": 	"top"
+	},
+	
+	{
+		"cmd": 	"connect local-mgmt"
+	},
+	
+	{
+		"cmd": 		"show tech-support ucsm detail",
+		"expect": 	"completed",
+		"timeout": 	600
+	},
+	
+	{
+		"cmd": 	"exit"
+	}
+]
