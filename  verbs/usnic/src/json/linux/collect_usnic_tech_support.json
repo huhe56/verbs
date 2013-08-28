@@ -1,0 +1,8 @@
+[
+	{
+		"cmd": 		"/opt/cisco/usnic/bin/tech_support_info",
+		"expect":	"\\/tmp.+xz",
+		"timeout":	60,
+		"return":	"true"
+	}
+]

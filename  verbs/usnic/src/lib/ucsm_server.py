@@ -60,6 +60,37 @@ class UcsmServer(FW):
         self._service_profile = service_profile
         
         
+    def scope_service_profile_from_top(self):
+        self._ssh.send_expect_prompt("top")
+        self._ssh.send_expect_prompt("scope org")
+        self._ssh.send_expect_prompt("scope service-profile " + self._service_profile)
+        
+        
+    def scope_vnic_from_top(self, vnic_name):
+        self.scope_service_profile_from_top()
+        self._ssh.send_expect_prompt("scope vnic " + vnic_name)
+        
     
+    def show_vnic_brief(self, vnic_name):
+        self.scope_vnic_from_top(vnic_name)
+        self._ssh.send_expect_prompt("show")
+        
+        
+    '''
+    fabric string can be: a, a-b, b, b-a
+    '''
+    def set_vnic_fabric(self, fabric_string):
+        self._ssh.send_expect_prompt("set fabric " + fabric_string)
+        self.commit()
+        
+        
+    def power_on(self):
+        self._ssh.send_expect_prompt("power up")
+        self.commit()
+        
+        
+    def power_off(self):
+        self._ssh.send_expect_prompt("power down")
+        self.commit()
         
         

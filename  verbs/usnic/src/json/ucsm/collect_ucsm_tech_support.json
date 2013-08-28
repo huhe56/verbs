@@ -1,0 +1,20 @@
+[
+	{
+		"cmd": 	"top"
+	},
+	
+	{
+		"cmd": 	"connect local-mgmt"
+	},
+	
+	{
+		"cmd": 		"show tech-support ucsm detail",
+		"expect": 	"workspace:.+tar",
+		"timeout": 	600,
+		"return":	"true"
+	},
+	
+	{
+		"cmd": 	"exit"
+	}
+]

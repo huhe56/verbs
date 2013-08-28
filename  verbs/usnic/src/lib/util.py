@@ -37,7 +37,7 @@ class Util(object):
     @staticmethod
     def check_shell_status(ssh):
         ssh.send("echo shell_status=$?")
-        ret_code = ssh.expect(["shell_status=0", "shell_status=1"])
+        ret_code = ssh.expect(["shell_status=0", "shell_status=1", pexpect.TIMEOUT])
         if ret_code == 0: 
             return True
         else:
@@ -69,7 +69,7 @@ class Util(object):
                     Util.run_step(ssh, step_cmd_i, step)
             else:
                 Util._logger.debug(step_cmd)
-                Util.run_step(ssh, step_cmd, step)
+                return Util.run_step(ssh, step_cmd, step)
                     
                     
     @staticmethod
@@ -94,20 +94,33 @@ class Util(object):
                 if return_code != 0:
                     break
         else:
-            Util.run_cmd(ssh, cmd_str, step_expect, step)
+            ret = Util.run_cmd(ssh, cmd_str, step_expect, step)
+            Util._logger.debug(ret)
+            return ret
     
     
     @staticmethod
     def run_cmd(ssh, cmd, expect_list, step):
         step_timeout = None
-        if "timeout" in step.keys(): step_timeout = step["timeout"]
+        step_return = None
+        if "timeout" in step.keys(): step_timeout = int(step["timeout"])
+        if "return"  in step.keys(): step_return  = step["return"]
         
         if expect_list:
+            Util._logger.debug(expect_list)
             ssh.send(cmd)
             if step_timeout:
-                return ssh.expect(cmd, expect_list, step_timeout)
+                if step_return:
+                    ssh.expect(expect_list, step_timeout)
+                    return ssh.get_session().match.group()
+                else:
+                    return ssh.expect(expect_list, step_timeout)
             else:
-                return ssh.expect(cmd, expect_list)
+                if step_return:
+                    ssh.expect(expect_list)
+                    return ssh.get_session().match.group()
+                else:
+                    return ssh.expect(expect_list)
         else:
             if step_timeout:
                 return ssh.send_expect_prompt(cmd, step_timeout)
@@ -125,6 +138,7 @@ class Util(object):
         line_list = Utils.read_file(path_config_file)
         for line in line_list:
             line.strip()
+            if line == "": continue
             if line.startswith("#"): continue
             if pattern1.search(line):
                 node_list_1 = pattern1.split(line)
@@ -140,3 +154,19 @@ class Util(object):
             else:
                 node_list.append(line)
         return sorted(node_list)
+
+
+    @staticmethod
+    def collect_ucsm_tech_support(ssh):
+        file_json_step = Define.PATH_USNIC_JSON_LINUX + "collect_ucsm_tech_support.json"
+        Util.run_step_list(ssh, file_json_step)
+        
+        
+    @staticmethod
+    def collect_usnic_tech_support(ssh):
+        file_json_step = Define.PATH_USNIC_JSON_LINUX + "collect_usnic_tech_support.json"
+        return Util.run_step_list(ssh, file_json_step)
+        
+        
+        
+    

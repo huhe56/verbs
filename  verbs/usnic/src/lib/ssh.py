@@ -55,6 +55,10 @@ class SSH(object):
         return _session
     
     
+    def get_session(self):
+        return self._session
+    
+    
     def is_login_ok(self):
         if self._session: 
             return True
@@ -70,8 +74,8 @@ class SSH(object):
         self._session.sendline(cmd)
         
     
-    def expect(self, pattern):
-        return self._session.expect(pattern)
+    def expect(self, pattern, timeout=None):
+        return self._session.expect(pattern, timeout)
         
         
     def send_expect_prompt(self, cmd, timeout=None):
