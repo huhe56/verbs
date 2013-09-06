@@ -8,6 +8,7 @@ import time
 import pexpect
 
 from main.define import Define
+from lib.util import Util
 from lib.ucsm import UCSM
 
 
@@ -16,6 +17,7 @@ if __name__ == '__main__':
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     ssh = ucsm.get_ssh()
     
+    '''
     for i in range(0, 3):
         ssh.send_expect_prompt("top")
         ssh.send_expect_prompt("scope firmware")
@@ -23,21 +25,34 @@ if __name__ == '__main__':
         ssh.expect(Define.PATTERN_PASSWORD)
         ssh.send_expect_prompt(Define.NODE_DEFAULT_PASSWORD)
         ssh.send_expect_prompt("scope download-task " + Define.IMAGE_LIST[i])
-        
-        try_count = 0
-        while True:
-            time.sleep(60)
-            ssh.send("show")
-            ret = ssh.expect([pexpect.TIMEOUT, "Downloaded"])
-            if ret == 1:
-                break
-            try_count = try_count + 1
-            if try_count == 10:
-                print "\nERROR: failed after trying " + str(try_count) + " times"
-                break
-            else:
-                print "\nINFO: have tried for " + str(try_count) + " times" 
-            
-        
-        
+    
+    ret = Util.probe_send_expect(ssh, "show", "Downloaded", 60, 10)
+    if not ret: exit()    
+    
+    
+    ssh.send_expect_prompt("top")
+    ssh.send_expect_prompt("scope firmware")
+    ssh.send_expect_prompt("scope auto-install")
+    ssh.send("install infra infra-vers 2.2(0." + str(Define.UCSM_BUNDLE_LATEST_BUILD_NUMBER) + ")A")
+    ssh.expect("yes\/no\):")
+    ssh.send_expect_prompt("yes")
+    ssh.exit()
+    
+    time.sleep(300)
+    '''
+    
+    ucsm = UCSM(Define.UCSM_HOSTNAME);
+    ssh = ucsm.get_ssh()
+    
+    ssh.send_expect_prompt("top")
+    ssh.send_expect_prompt("scope firmware")
+    ssh.send_expect_prompt("scope auto-install")
+    ret = Util.probe_send_expect(ssh, "show", "Pending User Ack", 300, 12)
+    if not ret: exit()
+    
+    ssh.send_expect_prompt("acknowledge primary fabric-interconnect reboot")
+    ssh.send_expect_prompt("commit-buffer")
+    ssh.exit()
+    
+    
         

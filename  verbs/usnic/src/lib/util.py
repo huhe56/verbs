@@ -51,6 +51,24 @@ class Util(object):
         print m
         
         
+    @staticmethod
+    def probe_send_expect(ssh, cmd, expect, interval, probe_max_count):
+        try_count = 1
+        while try_count <= probe_max_count:
+            time.sleep(interval)
+            Util._logger.info("probe times: " + str(try_count))
+            ssh.send(cmd)
+            ret = ssh.expect([pexpect.TIMEOUT, expect], 10)
+            if ret == 1:
+                Util._logger.info("found pattern " + expect)
+                return True
+            else:
+                try_count = try_count + 1
+            
+        Util._logger.error("pattern " + expect + " not found after trying " + str(probe_max_count) + " times")
+        return False
+    
+        
     '''
     cmd
     expect
@@ -74,8 +92,11 @@ class Util(object):
             if step_for:
                 for i in range(0, step_for):
                     step_cmd_i = step_cmd.replace("[$i]", "[" + str(i) + "]")
+                    Util._logger.debug("")
                     Util._logger.debug(step_cmd_i)
+                    Util._logger.debug("")
                     Util.run_step(ssh, step_cmd_i, step, ret)
+                    time.sleep(5)
             else:
                 Util._logger.debug(step_cmd)
                 ret = Util.run_step(ssh, step_cmd, step, ret)

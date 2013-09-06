@@ -16,7 +16,7 @@ if __name__ == '__main__':
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     ssh = ucsm.get_ssh()
     
-    Util.collect_ucsm_tech_support(ssh)
+    #Util.collect_ucsm_tech_support(ssh)
     Util.collect_chassis_tech_support(ssh)
     
     
