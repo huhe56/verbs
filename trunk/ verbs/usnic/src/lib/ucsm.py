@@ -24,9 +24,9 @@ class UCSM(Base):
         self._password = password
         ssh = SSH(hostname, username, password)
         ssh.send_expect_prompt("terminal length 0")
+        ssh.send_expect_prompt("terminal session-timeout 0")
         Base.__init__(self, ssh)
 
-    
     
     def scope_top(self):
         self._ssh.send_expect_prompt("top")

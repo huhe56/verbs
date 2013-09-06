@@ -44,6 +44,9 @@ if __name__ == '__main__':
                 
     pprint.pprint(subnet_dict)
     print "\n"
+    for subnet, ip_list in subnet_dict.iteritems():
+        print "total ip addresses in subnet " + subnet + ": " + str(len(ip_list))
+    print "\n"
     
     summary = [0, 0, 0, 0]
     for node in node_list:
