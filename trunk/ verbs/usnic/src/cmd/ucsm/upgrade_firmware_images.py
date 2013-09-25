@@ -5,7 +5,6 @@ Created on Aug 26, 2013
 '''
 
 import time
-import pexpect
 
 from main.define import Define
 from lib.util import Util
@@ -17,7 +16,7 @@ if __name__ == '__main__':
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     ssh = ucsm.get_ssh()
     
-    '''
+    
     for i in range(0, 3):
         ssh.send_expect_prompt("top")
         ssh.send_expect_prompt("scope firmware")
@@ -25,9 +24,8 @@ if __name__ == '__main__':
         ssh.expect(Define.PATTERN_PASSWORD)
         ssh.send_expect_prompt(Define.NODE_DEFAULT_PASSWORD)
         ssh.send_expect_prompt("scope download-task " + Define.IMAGE_LIST[i])
-    
-    ret = Util.probe_send_expect(ssh, "show", "Downloaded", 60, 10)
-    if not ret: exit()    
+        ret = Util.probe_send_expect(ssh, "show", "Downloaded", 60, 10)
+        if not ret: exit()    
     
     
     ssh.send_expect_prompt("top")
@@ -39,7 +37,7 @@ if __name__ == '__main__':
     ssh.exit()
     
     time.sleep(300)
-    '''
+    
     
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     ssh = ucsm.get_ssh()

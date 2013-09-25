@@ -205,5 +205,19 @@ class Util(object):
         Util.run_step_list(ssh, file_json_step)
         
         
+    @staticmethod
+    def collect_tech_support(ssh, cmd):
+        ssh.send_expect_prompt("top")
+        ssh.send_expect_prompt("connect local-mgmt")
+        ssh.send(cmd)
+        ssh.expect("workspace:.+tar", 600)
+        match_str = ssh.get_match_object().group()
+        Util._logger.debug("match string: " + match_str)
+        cmd_str = "copy " + match_str + " " + Define.URL_UCSM_CDETS_TECH_SUPPORT
+        ssh.send(cmd_str)
+        ssh.expect("password")
+        ssh.send(Define.CDEST_HUHE_PASSWORD)
+        
+        
         
     
