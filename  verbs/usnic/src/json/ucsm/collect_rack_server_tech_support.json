@@ -1,0 +1,29 @@
+[
+	{
+		"cmd": 	"top"
+	},
+	
+	{
+		"cmd": 	"connect local-mgmt"
+	},
+	
+	{
+		"cmd": 		"show tech-support server 1 detail",
+		"expect": 	"workspace:.+tar",
+		"timeout": 	600,
+		"return":	"true"
+	},
+	
+	{
+		"cmd":		"copy $ret $Define.URL_UCSM_CDETS_TECH_SUPPORT",
+		"expect":	"password"
+	},
+	
+	{
+		"cmd":		"$Define.CDEST_HUHE_PASSWORD"
+	},
+	
+	{
+		"cmd":		"exit"
+	}
+]
