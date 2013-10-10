@@ -139,7 +139,16 @@ class UcsmServer(FW):
         self._ssh.send_expect_prompt("show usnic-conn-policy-ref")
         
 
+    def disassociate_service_profile(self):
+        self._ssh.send_expect_prompt("disassociate")
+        self.commit()
         
+    def associate_service_profile(self):
+        server_index = str(self._server_index)
+        if self._chassis_index:
+            server_index = str(self._chassis_index) + "/" + server_index
+        self._ssh.send_expect_prompt("associate server " + server_index)
+        self.commit()
         
     
         
