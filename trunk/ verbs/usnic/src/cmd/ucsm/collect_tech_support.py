@@ -23,7 +23,7 @@ if __name__ == '__main__':
     cmd5 = "show tech-support fex 3 detail"
     cmd6 = "show tech-support server 1 detail"
     
-    for cmd in [cmd4, cmd5, cmd6]:
+    for cmd in [cmd1, cmd2]:
         Util.collect_tech_support(ssh, cmd)
     
     '''

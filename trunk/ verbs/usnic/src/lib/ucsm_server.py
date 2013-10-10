@@ -4,7 +4,9 @@ Created on Aug 13, 2013
 @author: huhe
 '''
 
+import pexpect
 from main.define import Define
+from lib.logger import MyLogger
 from lib.fw import FW
 from lib.ucsm import UCSM
 
@@ -19,6 +21,7 @@ class UcsmServer(FW):
         '''
         Constructor
         '''
+        self._logger = MyLogger.getLogger(self.__class__.__name__)
         self._ucsm = ucsm
         self._chassis_index = chassis_index
         self._server_index = server_index
@@ -92,5 +95,52 @@ class UcsmServer(FW):
     def power_off(self):
         self._ssh.send_expect_prompt("power down")
         self.commit()
+        
+        
+    
+    def set_bios_policy(self, bios_policy_name):
+        self._ssh.send_expect_prompt("set bios-policy " + bios_policy_name)
+        self.commit()
+        
+        
+    def set_boot_policy(self, boot_policy_name):
+        self._ssh.send_expect_prompt("set boot-policy " + boot_policy_name)
+        self.commit()
+        
+    def show_boot_policy_brief(self):
+        self._ssh.send_expect_prompt("show boot-policy")
+        
+        
+    def set_vnic_adapter_policy(self, vnic_adapter_policy_name):
+        self._ssh.send_expect_prompt("set adapter-policy " + vnic_adapter_policy_name)
+        self.commit()
+        
+        
+    def create_vnic_usnic_policy(self, vnic_usnic_policy_name):
+        self._ssh.send("show usnic-conn-policy-ref detail")
+        ret_index = self._ssh.expect([pexpect.TIMEOUT, "USNIC Connection Policy Name: (?P<usnic>[0-9_a-zA-Z]+)"], 5)
+        if ret_index == 0:
+            self.create_vnic_usnic_policy_directly(vnic_usnic_policy_name)
+        elif ret_index == 1:
+            match_str = self._ssh.get_match_object().group("usnic")
+            if match_str.lower() == vnic_usnic_policy_name.lower():
+                self._logger.info("policy name is the same; old: " + match_str + " == new : " + vnic_usnic_policy_name)
+            else:
+                self._ssh.send_expect_prompt("delete usnic-conn-policy-ref " + match_str)
+                self.commit()
+                self.create_vnic_usnic_policy_directly(vnic_usnic_policy_name)
+                
+    def create_vnic_usnic_policy_directly(self, vnic_usnic_policy_name):
+        self._ssh.send_expect_prompt("create usnic-conn-policy-ref " + vnic_usnic_policy_name)
+        self.commit()
+            
+    def show_vnic_usnic_policy_brief(self, vnic_name):
+        self.scope_vnic_from_top(vnic_name)
+        self._ssh.send_expect_prompt("show usnic-conn-policy-ref")
+        
+
+        
+        
+    
         
         

@@ -8,14 +8,20 @@ import time
 
 from main.define import Define
 from lib.util import Util
+from lib.node_head import NodeHead
 from lib.ucsm import UCSM
 
 
 if __name__ == '__main__':
     
+    '''
+    head_node = NodeHead(Define.NODE_HEAD_NAME, "huhe")
+    file_json_step = Define.PATH_USNIC_JSON_LINUX + "wget_ucsm_firmware.json"   
+    Util.run_step_list(head_node.get_ssh(), file_json_step)
+    '''
+    
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     ssh = ucsm.get_ssh()
-    
     
     for i in range(0, 3):
         ssh.send_expect_prompt("top")
@@ -37,7 +43,6 @@ if __name__ == '__main__':
     ssh.exit()
     
     time.sleep(300)
-    
     
     ucsm = UCSM(Define.UCSM_HOSTNAME);
     ssh = ucsm.get_ssh()
