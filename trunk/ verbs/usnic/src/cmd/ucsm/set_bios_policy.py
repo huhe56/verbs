@@ -15,7 +15,7 @@ if __name__ == '__main__':
     ucsm_server_list = UcsmServer.init_ucsm_server(Define.UCSM_HOSTNAME)
     for ucsm_server in ucsm_server_list:
         
-        if ucsm_server._chassis_index == 1 and ucsm_server._server_index == 1:
+        if ucsm_server._chassis_index != 99 and ucsm_server._server_index != 99:
             ucsm_server.scope_service_profile_from_top()
             ucsm_server.set_bios_policy(bios_policy_name)
 

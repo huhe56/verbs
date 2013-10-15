@@ -6,6 +6,7 @@ Created on Aug 8, 2013
 
 import pexpect, sys, re 
 
+from main import define
 from main.define import Define
 from lib.logger import MyLogger
 
@@ -25,7 +26,7 @@ class SSH(object):
         cmd = 'ssh ' + username + '@' + hostname
         self._logger.debug(cmd)
         _session = pexpect.spawn(cmd, timeout=Define.TIMEOUT_SSH)
-        if Define.PEXPECT_OUTPUT_STDOUT:
+        if define.PEXPECT_OUTPUT_STDOUT:
             _session.logfile_read = sys.stdout
         else:
             _session.logfile_read = file(Define.PATH_USNIC_LOG_FILE, "w")

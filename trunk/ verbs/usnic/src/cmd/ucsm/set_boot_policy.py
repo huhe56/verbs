@@ -15,7 +15,10 @@ if __name__ == '__main__':
     ucsm_server_list = UcsmServer.init_ucsm_server(Define.UCSM_HOSTNAME)
     for ucsm_server in ucsm_server_list:
         
-        if ucsm_server._chassis_index == 1 and ucsm_server._server_index == 1:
+        '''
+        don't do chassis 4, they are pxe, iscsi and fc, which is different boot policy
+        '''
+        if ucsm_server._chassis_index != 4:
             ucsm_server.scope_service_profile_from_top()
             ucsm_server.set_boot_policy(boot_policy_name)
             ucsm_server.show_boot_policy_brief()

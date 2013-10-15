@@ -16,7 +16,7 @@ if __name__ == '__main__':
     ucsm_server_list = UcsmServer.init_ucsm_server(Define.UCSM_HOSTNAME)
     for ucsm_server in ucsm_server_list:
         
-        if ucsm_server._chassis_index == 1 and ucsm_server._server_index == 1:
+        if ucsm_server._chassis_index != 99 and ucsm_server._server_index != 99:
             for vnic in vnic_list:
                 ucsm_server.scope_vnic_from_top(vnic)
                 ucsm_server.set_vnic_adapter_policy(vnic_adapter_policy_name)

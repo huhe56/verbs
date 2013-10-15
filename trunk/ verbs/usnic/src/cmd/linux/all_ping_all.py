@@ -8,12 +8,15 @@ import sys
 import pprint
 import ipaddr
 
+from main import define
 from main.define import Define
 from lib.util import Util
 from lib.node_compute import NodeCompute
 
     
 if __name__ == '__main__':
+    
+    define.PEXPECT_OUTPUT_STDOUT = False
     
     if len(sys.argv) == 3:
         node_usr = sys.argv[1]
