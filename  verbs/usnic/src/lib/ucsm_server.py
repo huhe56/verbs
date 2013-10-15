@@ -111,6 +111,14 @@ class UcsmServer(FW):
         self._ssh.send_expect_prompt("show boot-policy")
         
         
+    def set_host_fw_policy(self, host_fw_policy_name):
+        self._ssh.send_expect_prompt("set host-fw-policy " + host_fw_policy_name)
+        self.commit()
+        
+    def show_host_fw_policy_brief(self):
+        self._ssh.send_expect_prompt("show detail | grep host")
+        
+        
     def set_vnic_adapter_policy(self, vnic_adapter_policy_name):
         self._ssh.send_expect_prompt("set adapter-policy " + vnic_adapter_policy_name)
         self.commit()
