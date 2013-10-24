@@ -159,5 +159,26 @@ class UcsmServer(FW):
         self.commit()
         
     
+    '''
+    generic set vnic policy method
+    '''
+    def set_vnic_policy(self, vnic_name, vnic_policy_type, vnic_policy_name):
+        self.scope_vnic_from_top(vnic_name)
+        self._ssh.send_expect_prompt("set " + vnic_policy_type + " " + vnic_policy_name)
+        self.commit()
         
+    def show_vnic_policy(self, vnic_name, vnic_policy_label):
+        self.scope_vnic_from_top(vnic_name)
+        self._ssh.send_expect_prompt("show detail | grep -i " + vnic_policy_label)
+        
+        
+    '''
+    generic set service profile policy method
+    '''
+    def set_service_profile_policy(self, policy_type, policy_name):
+        self._ssh.send_expect_prompt("set " + policy_type + " " + policy_name)
+        self.commit()
+        
+    def show_service_profile_policy(self, policy_label):
+        self._ssh.send_expect_prompt("show detail | grep -i " + policy_label)
         
