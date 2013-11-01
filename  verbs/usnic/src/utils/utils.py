@@ -27,10 +27,18 @@ class Utils(object):
 
     @staticmethod
     def write_file(filename, content): 
-        fh = open(filename, 'w')
+        fh = open(filename, 'a')
         fh.write(content)
         fh.close
     
+    
+    @staticmethod
+    def append_file(target, source):
+        f_target = open(target, "a")
+        f_source = open(source, "r")
+        f_target.write(f_source.read())
+        f_target.close()
+        
     
     @staticmethod
     def set_prefix_zero_string(index, length):
