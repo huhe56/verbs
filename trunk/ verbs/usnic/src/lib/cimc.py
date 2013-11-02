@@ -27,32 +27,52 @@ class CIMC(FW):
         FW.__init__(self, SSH(hostname, username, password))
         
         
-    def scope_usnic(self):
-        self.send_expect_prompt("scope usnic-config 0")
-        
+   
         
     def scope_adapter_from_top(self, adapter_index):
         self.scope_top()
         self.scope_chassis()
         self.scope_adapter(adapter_index)
         
+    
+    ''' usnic '''
         
+    def scope_usnic(self):
+        self._ssh.send_expect_prompt("scope usnic-config 0")
+        
+
     def scope_usnic_from_top(self, adapter_index, host_eth_if):
-        self.scope_adapter_from_top(adapter_index)
-        self.scope_host_eth_if(host_eth_if)
+        self.scope_host_eth_if_from_top(adapter_index, host_eth_if)
         self.scope_usnic()
         
     
     def create_usnic(self, host_eth_if, count):
-        self._ssh.send_expect_prompt("create host-eth-if " + host_eth_if)
-        self.commit()
         self._ssh.send_expect_prompt("create usnic-config 0")
-        self.set_count(count)
+        self.set_usnic_count(count)
+        self.commit()
+        
+        
+    def create_usnic_from_top(self, adapter_index, host_eth_if, count):
+        self.scope_host_eth_if_from_top(adapter_index, host_eth_if)
+        if not self.is_usnic_created():
+            self.create_usnic(host_eth_if, count)
+        else:
+            self._logger.info("usnic already exists at adapter " + str(adapter_index) + ", " + host_eth_if)
+            self.scope_usnic()
+            self.set_usnic_count(count)
         
         
     def delete_usnic(self, host_eth_if):
-        self._ssh.send_expect_prompt("delete host-eth-if " + host_eth_if)
-        self.commit()
+        self.set_usnic_count(0)
+        
+        
+    def delete_usnic_from_top(self, adapter_index, host_eth_if):
+        self.scope_host_eth_if_from_top(adapter_index, host_eth_if)
+        if self.is_usnic_created():
+            self.scope_usnic()
+            self.set_usnic_count(0)
+        else:
+            self._logger.info("usnic not exist at adapter " + str(adapter_index) + ", " + host_eth_if)
         
         
     def show_usnic_detail(self):
@@ -63,17 +83,92 @@ class CIMC(FW):
         self._ssh.send_expect_prompt("show")
         
         
+    def show_usnic_brief_at_host_eth_if(self):
+        self._ssh.send_expect_prompt("show usnic-config")
+        
+        
     def set_usnic_count(self, count):
         self._ssh.send_expect_prompt("set usnic-count " + str(count))
         self.commit()
         
         
     def get_usnic_count(self):
-        self.get_usnic_brief()
-        output = self.get_output()
+        self.show_usnic_brief()
+        output = self._ssh.get_output()
         lines = output.split(Define.PATTERN_NEW_LINE)
-        items = re.compile("\s+").split(lines[3])
-        return items[1]
+        if len(lines) < 3:
+            return 0
+        else:
+            items = re.compile("\s+").split(lines[3])
+            return int(items[1])
+    
+    def get_usnic_count_at_host_eth_if(self):
+        self.show_usnic_brief_at_host_eth_if()
+        output = self._ssh.get_output()
+        lines = output.split(Define.PATTERN_NEW_LINE)
+        if len(lines) < 3:
+            return 0
+        else:
+            items = re.compile("\s+").split(lines[3])
+            return int(items[1])
+    
+    
+    def is_usnic_created(self):
+        usnic_count = self.get_usnic_count_at_host_eth_if()
+        if usnic_count == 0:
+            return False
+        else:
+            return True
+        
+    def is_usnic_created_from_top(self, adapter_index, host_eth_if):
+        self.scope_host_eth_if_from_top(adapter_index, host_eth_if)
+        return self.is_usnic_created()
+        
+    
+    ''' host eth if '''
+    
+    def scope_host_eth_if_from_top(self, adapter_index, host_eth_if):
+        self.scope_adapter_from_top(adapter_index)
+        self.scope_host_eth_if(host_eth_if)
+        
+        
+    def show_host_eth_if_brief(self):
+        self._ssh.send_expect_prompt("show host-eth-if")
+    
+    
+    def get_host_eth_if_list(self):
+        self.show_host_eth_if_brief()
+        output = self.get_ssh().get_output()
+        lines = output.split(Define.PATTERN_NEW_LINE)
+        ret = []
+        for line in lines:
+            items = re.compile("\s+").split(line)
+            if items[0].startswith(Define.CIMC_HOST_ETH_IF):
+                ret.append(items[0])
+        return ret 
+    
+    
+    def delete_host_eth_if(self, host_eth_if):
+        if host_eth_if not in Define.CIMC_DEFAULT_ETH_IF_LIST:
+            self._ssh.send_expect_prompt("delete host-eth-if " + host_eth_if)
+            self.commit()
+        else:
+            self._logger.info(host_eth_if + " is default interface, can not be deleted")
+        
+        
+    def create_host_eth_if(self, host_eth_if):
+        if host_eth_if not in Define.CIMC_DEFAULT_ETH_IF_LIST:
+            self._ssh.send_expect_prompt("create host-eth-if " + host_eth_if)
+            self.commit()
+        else:
+            self._logger.info(host_eth_if + " is default interface, can not be created")
+        
+        
+    def delete_all_host_eth_if(self):
+        host_eth_if_list = self.get_host_eth_if_list()
+        for host_eth_if in host_eth_if_list:
+            self.delete_host_eth_if(host_eth_if)
+            
     
         
         

@@ -4,7 +4,7 @@ Created on Oct 31, 2013
 @author: huhe
 '''
 
-import time, inspect
+import time
 import pexpect
 
 from main.define import Define
