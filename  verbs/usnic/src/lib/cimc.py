@@ -24,9 +24,7 @@ class CIMC(FW):
         self._hostname = hostname
         self._username = username
         self._password = password
-        FW.__init__(self, SSH(hostname, username, password))
-        
-        
+        FW.__init__(self, SSH(hostname, username, password))        
    
         
     def scope_adapter_from_top(self, adapter_index):
@@ -156,20 +154,49 @@ class CIMC(FW):
             self._logger.info(host_eth_if + " is default interface, can not be deleted")
         
         
+    def create_host_eth_if_from_top(self, adapter_index, host_eth_if):
+        self.scope_adapter_from_top(adapter_index)
+        self.create_host_eth_if(host_eth_if)
+        
+        
+    ''' host_eth_if pattern must be "eth\d+" '''
     def create_host_eth_if(self, host_eth_if):
         if host_eth_if not in Define.CIMC_DEFAULT_ETH_IF_LIST:
             self._ssh.send_expect_prompt("create host-eth-if " + host_eth_if)
+            host_eth_if_index = int(host_eth_if.replace("eth", ""))
+            uplink_index = host_eth_if_index % 2 == 0
+            self._ssh.send_expect_prompt("set uplink " + str(uplink_index))
             self.commit()
         else:
             self._logger.info(host_eth_if + " is default interface, can not be created")
+        
+        
+    def delete_all_host_eth_if_from_top(self, adapter_index):
+        self.scope_adapter_from_top(adapter_index)
+        self.delete_all_host_eth_if()
         
         
     def delete_all_host_eth_if(self):
         host_eth_if_list = self.get_host_eth_if_list()
         for host_eth_if in host_eth_if_list:
             self.delete_host_eth_if(host_eth_if)
+        host_eth_if_list = self.get_host_eth_if_list()
+        if host_eth_if_list != Define.CIMC_DEFAULT_ETH_IF_LIST:
+            self._logger.error("host eth if other than eth0 and eth1 is not deleted")
+            return False
+        else:
+            self._logger.info("non default host eth if have been deleted")
+            return True
             
     
+    ''' misc '''
+        
+    def power_cycle(self):
+        self.scope_chassis_from_top()
+        self._ssh.send("power cycle")
+        self._ssh.expect('\[y\|N\]')
+        self._ssh.send_expect_prompt("y")
+        
         
         
     

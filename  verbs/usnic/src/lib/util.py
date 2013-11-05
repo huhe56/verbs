@@ -13,6 +13,7 @@ import pexpect
 from main.define import Define
 from lib.logger import MyLogger
 from utils.utils import Utils
+from lib.node_compute import NodeCompute
 
 
 class Util(object):
@@ -219,5 +220,21 @@ class Util(object):
         ssh.send(Define.CDEST_HUHE_PASSWORD)
         
     
+    @staticmethod
+    def wait_for_node_to_boot_up(node_ip):
+        node = None
+        probe_max_count = 10
+        try_count = 1
+        interval = 60
+        while try_count <= probe_max_count:
+            time.sleep(interval)
+            node = NodeCompute(node_ip)
+            if not node.get_ssh():
+                Util._logger.info("probe times: " + str(try_count))
+                try_count = try_count + 1
+            else:
+                return node
+            
+            
         
     

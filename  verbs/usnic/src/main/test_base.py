@@ -30,7 +30,7 @@ class TestBase(object):
         return self._ssh.expect([expected, pexpect.TIMEOUT], timeout)
     
     
-    def check_status(self, positive):
+    def check_shell_status(self, positive=True):
         time.sleep(5)
         self._ssh.send("echo status=$?")
         status_str = None
@@ -48,9 +48,4 @@ class TestBase(object):
         Utils.write_file(Define.PATH_USNIC_LOG_FILE_ALL, message)
         
         
-    def run_mpi(self, mpi_cmd, timeout):
-        self._logger.info(mpi_cmd)
-        self.send(mpi_cmd)
-        ret = self.expect("All processes entering MPI_Finalize", timeout=30)
-        self.assertEqual(ret, 0)
         

@@ -4,6 +4,7 @@ Created on Aug 13, 2013
 @author: huhe
 '''
 
+from main import define
 from main.define import Define
 from lib.base import Base
 
@@ -24,7 +25,8 @@ class FW(Base):
     
 
     def commit(self):
-        self._ssh.send_expect_prompt("commit", Define.TIMEOUT_COMMIT)
+        if define.CIMC_COMMIT_IMMEDIATELY:
+            self._ssh.send_expect_prompt("commit", Define.TIMEOUT_COMMIT)
         
         
     def scope_top(self):
@@ -50,8 +52,9 @@ class FW(Base):
         self._ssh.send_expect_prompt("scope host-eth-if " + host_eth_if)
     
     
-    def scope_chassis_from_top(self):
-        pass
+    def scope_chassis_from_top(self, chassis_index=None):
+        self.scope_top()
+        self.scope_chassis(chassis_index)
         
         
     def scope_adapter_from_top(self, adapter_index):
