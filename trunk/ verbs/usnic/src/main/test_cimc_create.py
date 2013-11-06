@@ -39,9 +39,8 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self._cimc_1._ssh.exit()
         Utils.append_file(Define.PATH_USNIC_LOG_FILE_ALL, Define.PATH_USNIC_LOG_FILE)
 
-    '''
-    @unittest.skip    
-    def test_create_1pf_usnic_default_host_eth_if(self):
+    
+    def test_create_1pf_usnic(self):
         self.init_test(inspect.stack()[0][3])
         
         # remove usnic from eth1 
@@ -60,9 +59,11 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         count = Define.CIMC_MAX_USNIC_PER_ADAPTER
         self.check_set_usnic(adapter_index, host_eth_if, count)
     
+        count = 16
+        self.check_set_usnic(adapter_index, host_eth_if, count)
     
     
-    def test_create_1pf_usnic_max_default_host_eth_if_negative(self):
+    def test_create_1pf_usnic_max_negative(self):
         self.init_test(inspect.stack()[0][3])
         test_type = False
         
@@ -75,8 +76,8 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         count = Define.CIMC_MAX_USNIC_PER_ADAPTER + 1
         self.check_set_usnic(adapter_index, host_eth_if, count, test_type)
         
-        
-    def test_create_1pf_usnic_string_default_host_eth_if_negative(self):
+    
+    def test_create_1pf_usnic_string_negative(self):
         self.init_test(inspect.stack()[0][3])
         test_type = False
         
@@ -89,8 +90,8 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         count = "wrong"
         self.check_set_usnic(adapter_index, host_eth_if, count, test_type)
         
-        
-    def test_create_1pf_usnic_minus_default_host_eth_if_negative(self):
+    
+    def test_create_1pf_usnic_minus_negative(self):
         self.init_test(inspect.stack()[0][3])
         test_type = False
         
@@ -104,25 +105,29 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self.check_set_usnic(adapter_index, host_eth_if, count, test_type)
         
     
-    @unittest.skip 
-    def test_create_2pf_usnic_default_host_eth_if(self):
+    def test_create_2pf_16usnic_run_mpi(self):
         self.init_test(inspect.stack()[0][3])
         
         adapter_index = 1   
         count = 16    
-         
-        for host_eth_if in Define.CIMC_DEFAULT_ETH_IF_LIST:
-            self._cimc_1.create_usnic_from_top(adapter_index, host_eth_if, count)
-            self.check_create_usnic(adapter_index, host_eth_if, count)
+        usnic_count_dictionary = {
+                                "eth0": count,
+                                "eth1": count
+                                  }
+        expected_usnic_count_list = [count, count]
         
-
-        for host_eth_if in Define.CIMC_DEFAULT_ETH_IF_LIST:
-            count = Define.CIMC_MAX_USNIC_2PF_LIST[host_eth_if]
-            self.check_set_usnic(adapter_index, host_eth_if, count)
+        self.create_usnic(self._cimc_1, adapter_index, usnic_count_dictionary)
+        self.check_host_usnic(self._host_1, expected_usnic_count_list)
         
+        self._host_2 = DefineMpi.NODE_HOST_IP_2
+        self._cimc_2 = CIMC(DefineMpi.NODE_CIMC_IP_2)      
+        self.create_usnic(self._cimc_2, adapter_index, usnic_count_dictionary)
+        self.check_host_usnic(self._host_2, expected_usnic_count_list)
         
-    @unittest.skip
-    def test_create_2pf_usnic_max_default_host_eth_if_negative(self):
+        self.run_mpi(self._host_1)
+        
+    
+    def test_create_2pf_usnic_max_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         adapter_index = 1   
@@ -137,50 +142,78 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self.check_set_usnic(adapter_index, host_eth_if, count)
         host_eth_if = "eth1"
         self.check_set_usnic(adapter_index, host_eth_if, count, False)
+     
     
-        
-    @unittest.skip 
-    def test_create_2pf_16usnic_run_mpi(self):
-        self.init_test(inspect.stack()[0][3])
-        count = 16
-        self.run_create_2pf_same_usnic_run_mpi(count)
-        
-        
-    @unittest.skip 
     def test_create_2pf_32usnic_run_mpi(self):
         self.init_test(inspect.stack()[0][3])
-        count = 32
-        self.run_create_2pf_same_usnic_run_mpi(count)
-    '''
         
+        adapter_index = 1   
+        count = 32    
+        usnic_count_dictionary = {
+                                "eth0": count,
+                                "eth1": count
+                                  }
+        expected_usnic_count_list = [count, count]
+        
+        self.create_usnic(self._cimc_1, adapter_index, usnic_count_dictionary)
+        self.check_host_usnic(self._host_1, expected_usnic_count_list)
+        
+        self.run_mpi(self._host_1)
+        
+    
+    def test_create_2pf_diff_usnic_run_mpi(self):
+        self.init_test(inspect.stack()[0][3])
+        
+        adapter_index = 2   
+        usnic_count_dictionary = {
+                                "eth0": 65,
+                                "eth1": 19
+                                  }
+        expected_usnic_count_list = [-1, -1, 65, 19]
+        
+        self.create_usnic(self._cimc_1, adapter_index, usnic_count_dictionary)
+        self.check_host_usnic(self._host_1, expected_usnic_count_list)
+        
+        self.run_mpi(self._host_1)
+    
+    
     def test_create_4pf_16usnic(self):
+        self.init_test(inspect.stack()[0][3])
+        
         adapter_index = 1
         count = 16
-        
-        new_host_eth_if_list = ["eth2", "eth3"]
-        
-        for host_eth_if in new_host_eth_if_list:
-            self._cimc_1.create_host_eth_if_from_top(adapter_index, host_eth_if)
-        
-        adapter_index_list = [adapter_index]
-        host_eth_if_list = Define.CIMC_DEFAULT_ETH_IF_LIST + new_host_eth_if_list
-        self.create_same_usnic(adapter_index_list, host_eth_if_list, count)
+        host_eth_if_dictionary = {
+                                "eth2": {"uplink": 0, "vlan": 50, "vlan-mode": "trunk"}, 
+                                "eth3": {"uplink": 0, "vlan": 60, "vlan-mode": "trunk"}
+                                }
+        usnic_count_dictionary = {
+                                "eth0": count,
+                                "eth1": count,
+                                "eth2": count,
+                                "eth3": count
+                                  }
+        expected_usnic_count_list = [count, count, count, count]
+                                                
+        self.create_pf(self._cimc_1, adapter_index, host_eth_if_dictionary)
+        self.create_usnic(self._cimc_1, adapter_index, usnic_count_dictionary)
+        self.check_host_usnic(self._host_1, expected_usnic_count_list)
         
         self._cimc_1.delete_all_host_eth_if_from_top(adapter_index)
-    
-    '''
+        
+        
     def test_create_16pf_14usnic(self):        
+        self.init_test(inspect.stack()[0][3])
+        
         adapter_index = 1
-        count = 14
+        count = 13
         
         new_host_eth_if_list = ["eth" + str(i) for i in range(2, 16)]
         
         for host_eth_if in new_host_eth_if_list:
             self._cimc_1.create_host_eth_if_from_top(adapter_index, host_eth_if)
         
-        adapter_index_list = [adapter_index]
         host_eth_if_list = Define.CIMC_DEFAULT_ETH_IF_LIST + new_host_eth_if_list
-        self.create_same_usnic(adapter_index_list, host_eth_if_list, count)
+        self.create_same_usnic(adapter_index, host_eth_if_list, count)
         
         self._cimc_1.power_cycle()
         
@@ -190,32 +223,41 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self.assertEqual(usnic_configured_count_list, expected_usnic_configured_count_list)
         
         self._cimc_1.delete_all_host_eth_if_from_top(adapter_index)
-    '''
     
-    def create_same_usnic(self, adapter_index_list, host_eth_if_list, count):
-        for adapter_index in adapter_index_list:
-            for host_eth_if in host_eth_if_list:
-                self._cimc_1.create_usnic_from_top(adapter_index, host_eth_if, count)
-                self.check_create_usnic(adapter_index, host_eth_if, count)
-                
         
-    def run_create_2pf_same_usnic_run_mpi(self, count):
-        for adapter_index in [1, 2]:
-            for host_eth_if in Define.CIMC_DEFAULT_ETH_IF_LIST:
-                self._cimc_1.create_usnic_from_top(adapter_index, host_eth_if, count)
-                self.check_create_usnic(adapter_index, host_eth_if, count)
+    def create_pf(self, cimc, adapter_index, host_eth_if_dictionary):
+        cimc.create_host_eth_if_from_top(cimc, adapter_index, host_eth_if_dictionary)
         
-        self._cimc_1.power_cycle()
         
-        node = Util.wait_for_node_to_boot_up(self._host_1)
-        usnic_configured_count_list = node.get_usnic_configured_count_list()        
-        expected_usnic_configured_count_list = [count, count, count, count]
-        self.assertEqual(usnic_configured_count_list, expected_usnic_configured_count_list)
+    def create_usnic(self, cimc, adapter_index, usnic_count_dictionary):
+        for host_eth_if, usnic_count in usnic_count_dictionary.iteritems():
+            cimc.create_usnic_from_top(adapter_index, host_eth_if, usnic_count)
+            created_usnic_count = cimc.get_usnic_count()
+            self.assertEqual(created_usnic_count, usnic_count)
+        cimc.power_cycle()
         
-        ret = node.run_mpi(DefineMpi.MPI_CMD_PINGPONG, DefineMpi.MPI_CMD_TIMEOUT_PINGPONG)
+    
+    def check_host_usnic(self, host, expected_usnic_count_list):
+        host = Util.wait_for_node_to_boot_up(host)
+        configured_usnic_count_list = host.get_usnic_configured_count_list()        
+        for configured_count, expected_count in zip(configured_usnic_count_list, expected_usnic_count_list):
+            if expected_count > 0:
+                self.assertEqual(configured_count, expected_count)
+        return host
+        
+        
+    def run_mpi(self, host):
+        host = NodeCompute(host)
+        ret = host.run_mpi(DefineMpi.MPI_CMD_PINGPONG, DefineMpi.MPI_CMD_TIMEOUT_PINGPONG)
         self.assertEquals(ret, 0)
-        shell_status = node.get_shell_status()
+        shell_status = host.get_shell_status()
         self.assertEqual(shell_status, 0)
+        
+    
+    def create_same_usnic(self, adapter_index, host_eth_if_list, count):
+        for host_eth_if in host_eth_if_list:
+            self._cimc_1.create_usnic_from_top(adapter_index, host_eth_if, count)
+            self.check_create_usnic(adapter_index, host_eth_if, count)
         
         
     def check_create_usnic(self, adapter_index, host_eth_if, count, test_type=True):
