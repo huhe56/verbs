@@ -124,7 +124,7 @@ class CIMC(FW):
         
     
     ''' host eth if '''
-    
+        
     def scope_host_eth_if_from_top(self, adapter_index, host_eth_if):
         self.scope_adapter_from_top(adapter_index)
         self.scope_host_eth_if(host_eth_if)
@@ -154,21 +154,20 @@ class CIMC(FW):
             self._logger.info(host_eth_if + " is default interface, can not be deleted")
         
         
-    def create_host_eth_if_from_top(self, adapter_index, host_eth_if):
-        self.scope_adapter_from_top(adapter_index)
-        self.create_host_eth_if(host_eth_if)
-        
-        
-    ''' host_eth_if pattern must be "eth\d+" '''
-    def create_host_eth_if(self, host_eth_if):
-        if host_eth_if not in Define.CIMC_DEFAULT_ETH_IF_LIST:
-            self._ssh.send_expect_prompt("create host-eth-if " + host_eth_if)
-            host_eth_if_index = int(host_eth_if.replace("eth", ""))
-            uplink_index = host_eth_if_index % 2 == 0
-            self._ssh.send_expect_prompt("set uplink " + str(uplink_index))
-            self.commit()
-        else:
-            self._logger.info(host_eth_if + " is default interface, can not be created")
+    def create_host_eth_if_from_top(self, cimc, adapter_index, host_eth_if_dictionary):
+        for host_eth_if, host_eth_if_setting in host_eth_if_dictionary.iteritems():
+            if host_eth_if not in Define.CIMC_DEFAULT_ETH_IF_LIST:
+                cimc.scope_adapter_from_top(adapter_index)
+                uplink_index = host_eth_if_setting["uplink"]
+                vlan = host_eth_if_setting["vlan"]
+                vlan_mode = host_eth_if_setting["vlan-mode"]
+                self._ssh.send_expect_prompt("create host-eth-if " + host_eth_if)
+                self._ssh.send_expect_prompt("set uplink " + str(uplink_index))
+                self._ssh.send_expect_prompt("set vlan-mode " + vlan_mode)
+                self._ssh.send_expect_prompt("set vlan " + str(vlan))
+                self.commit()
+            else:
+                self._logger.info(host_eth_if + " is default interface, can not be created")
         
         
     def delete_all_host_eth_if_from_top(self, adapter_index):
