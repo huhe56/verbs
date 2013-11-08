@@ -6,6 +6,7 @@ Created on Aug 14, 2013
 
 import time, re
 
+from main.define import Define
 from lib.base import Base
 from lib.ssh import SSH
 
@@ -25,6 +26,14 @@ class RedHat(Base):
         self._password = password
         Base.__init__(self, SSH(hostname, username, password))
         self._eth_if_list = None
+        
+    
+    def set_eth_if_ip(self, eth_if, ip_mask):
+        self._ssh.send("su -")
+        self._ssh.expect("assword: ")
+        self._ssh.send_expect_prompt(Define.NODE_DEFAULT_PASSWORD)
+        self._ssh.send_expect_prompt("ifconfig " + eth_if + " " + ip_mask + " up")
+        self._ssh.send_expect_prompt("exit")
         
         
     def get_eth_if_list(self):
