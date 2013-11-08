@@ -33,6 +33,7 @@ class Base(object):
     
     def set_ssh(self, ssh):
         if ssh.is_login_ok():
+            self._logger.debug("login is ok and set in Base")
             self._ssh = ssh
             
             
@@ -41,6 +42,8 @@ class Base(object):
         self._ssh = None
     
     
+    def exit(self):
+        self.exit_ssh()
     
 
     

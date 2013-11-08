@@ -7,9 +7,12 @@ Created on Oct 31, 2013
 import time
 import pexpect
 
-from main.define import Define
+from main.define import Define, DefineMpi
+from lib.node_compute import NodeCompute
+from lib.util import Util
 from lib.logger import MyLogger
 from utils.utils import Utils
+from lib.cimc import CIMC
 
 
 class TestBase(object):
@@ -18,17 +21,9 @@ class TestBase(object):
     '''
 
 
-    def init(self, ssh):
-        self._logger = MyLogger.getLogger(self.__class__.__name__)
-        self._ssh = ssh
-    
-    def send(self, cmd):
-        self._ssh.send(cmd)
+    def init(self):
+        self._logger = MyLogger.getLogger(self.__class__.__name__)    
         
-    
-    def expect(self, expected, timeout=10):
-        return self._ssh.expect([expected, pexpect.TIMEOUT], timeout)
-    
     
     def check_shell_status(self, positive=True):
         time.sleep(5)
@@ -46,6 +41,78 @@ class TestBase(object):
         message = "\n\n====================== " + test_name + " =====================\n\n"
         self._logger.info(message)
         Utils.write_file(Define.PATH_USNIC_LOG_FILE_ALL, message)
+    
+
+    def run_mpi(self, host, param_dictionary):
+        host.run_mpi(param_dictionary)
+        shell_status = host.get_shell_status()
+        expected_message = DefineMpi.MPI_MESSAGE_DEFAULT
+        if DefineMpi.MPI_PARAM_MSG in param_dictionary.keys():
+            expected_message = param_dictionary[DefineMpi.MPI_PARAM_MSG]
+        if expected_message in DefineMpi.SHELL_STATUS_0_MESSAGE_LIST:
+            self.assertEqual(shell_status, 0)
+            if host.mpi_run_has_error():
+                raise Exception("mpi run has error")
+            if host.mpi_run_has_aborted():
+                raise Exception("mpi run aborted")
+        elif expected_message in DefineMpi.SHELL_STATUS_1_MESSAGE_LIST:
+            self.assertEqual(shell_status, 1)
+            
+        
+    def create_pf(self, cimc, adapter_index, host_eth_if_dictionary):
+        cimc.create_host_eth_if_from_top(cimc, adapter_index, host_eth_if_dictionary)
         
         
+    def create_usnic(self, cimc, adapter_index, usnic_count_dictionary):
+        for host_eth_if, usnic_count in usnic_count_dictionary.iteritems():
+            cimc.create_usnic_from_top(adapter_index, host_eth_if, usnic_count)
+            created_usnic_count = cimc.get_usnic_count()
+            self.assertEqual(created_usnic_count, usnic_count)
         
+    
+    def check_host_usnic(self, host, expected_usnic_count_list):
+        configured_usnic_count_list = host.get_usnic_configured_count_list()        
+        for configured_count, expected_count in zip(configured_usnic_count_list, expected_usnic_count_list):
+            if expected_count > 0:
+                self.assertEqual(configured_count, expected_count)
+        host.exit()
+    
+    
+    def create_usnic_check_host_usnic(self, cimc, host_ip, adapter_index, usnic_count_dictionary, expected_usnic_count_list):
+        self.create_usnic(cimc, adapter_index, usnic_count_dictionary)
+        cimc.power_cycle()
+        host = Util.wait_for_node_to_boot_up(host_ip)
+        self.check_host_usnic(host, expected_usnic_count_list)
+        return host
+        
+        
+    def create_pf_and_usnic_check_host_usnic(self, cimc, host_ip, adapter_index, host_eth_if_dictionary, usnic_count_dictionary, expected_usnic_count_list, host_if_ip_dictionary):
+        self.create_pf(cimc, adapter_index, host_eth_if_dictionary)
+        host = self.create_usnic_check_host_usnic(cimc, host_ip, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
+        self.set_host_if_ip(host, host_if_ip_dictionary)
+        return host
+        
+    
+    def set_host_if_ip(self, host, host_if_ip_dictionary):
+        for int_if, ip_mask in host_if_ip_dictionary.iteritems():
+            host.set_eth_if_ip(int_if, ip_mask)
+        
+    
+    def create_usnic_for_all_node(self, count):
+        usnic_count_dictionary = {
+                                "eth0": count,
+                                "eth1": count,
+                                  }
+        for cimc_ip, host_ip in zip(DefineMpi.NODE_CIMC_LIST, DefineMpi.NODE_HOST_LIST):
+            cimc = CIMC(cimc_ip)
+            for adapter_index in [1, 2]:
+                self.create_usnic(cimc, adapter_index, usnic_count_dictionary)
+                expected_usnic_count_list = None
+                if adapter_index == 1:
+                    expected_usnic_count_list = [count, count, -1, -1]
+                else:
+                    expected_usnic_count_list = [-1, -1, count, count]
+                self.check_host_usnic(host_ip, expected_usnic_count_list)
+                
+                
+    

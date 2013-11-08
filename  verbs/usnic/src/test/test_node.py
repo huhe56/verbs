@@ -5,7 +5,8 @@ Created on Aug 8, 2013
 '''
 import time
 
-from main.define import Define
+from main import define
+from main.define import Define, DefineMpi
 from lib.util import Util
 from lib.node_compute import NodeCompute
 from lib.node_head import NodeHead
@@ -28,7 +29,7 @@ if __name__ == '__main__':
     print eth_if_list
     compute_node._ssh.send("exit")
     '''
-    
+    '''
     node = None
     probe_max_count = 10
     try_count = 1
@@ -53,6 +54,18 @@ if __name__ == '__main__':
     
     ret = node.get_usnic_used_count_list()
     print ret 
+    '''
+    
+    define.PEXPECT_OUTPUT_STDOUT = False
+    host = NodeCompute("bcnode13")
+    params = {
+            #DefineMpi.MPI_PARAM_CMD:                    DefineMpi.MPI_CMD_PINGPONG,
+            DefineMpi.MPI_PARAM_HOST:                   ["bcnode13", "bcnode14"],
+            #DefineMpi.MPI_PARAM_CHECK_VF_USED_COUNT:    True,
+            #DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST:     [16, 16, 16, 16, 16, 16]
+            }
+    
+    host.run_mpi(params)
     
     
     

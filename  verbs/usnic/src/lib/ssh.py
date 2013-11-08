@@ -5,10 +5,12 @@ Created on Aug 8, 2013
 '''
 
 import pexpect, sys, re 
+import datetime
 
 from main import define
 from main.define import Define
 from lib.logger import MyLogger
+from utils.utils import Utils
 
 class SSH(object):
     '''
@@ -29,7 +31,9 @@ class SSH(object):
         if define.PEXPECT_OUTPUT_STDOUT:
             _session.logfile_read = sys.stdout
         else:
-            _session.logfile_read = file(Define.PATH_USNIC_LOG_FILE, "w")
+            Utils.append_file(Define.PATH_USNIC_LOG_FILE_ALL, Define.PATH_USNIC_LOG_FILE)
+            log_file = Define.PATH_USNIC_LOG_FILE
+            _session.logfile_read = file(log_file, "w")
         ret = _session.expect([pexpect.TIMEOUT, pexpect.EOF, Define.PATTERN_SSH_NEW_KEY, Define.PATTERN_PROMPT, Define.PATTERN_PASSWORD])
         if ret == 0:
             self._logger.error('timeout when ssh to ' + hostname)
@@ -106,6 +110,7 @@ class SSH(object):
     
     
     def exit(self):
+        self._logger.debug("exit ssh")
         self.send("exit")
     
         
