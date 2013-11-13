@@ -8,42 +8,40 @@ import inspect
 
 from main.define import DefineMpi, Define
 from main import define
-from lib.util import Util
 from lib.cimc import CIMC
 from lib.node_compute import NodeCompute
 from main.test_base import TestBase
 
 
-class TestCimcCreateMpi(unittest.TestCase, TestBase):
+class TestCimcCreateMpiNegative(unittest.TestCase, TestBase):
 
     @classmethod
     def setUpClass(cls):
         define.PEXPECT_OUTPUT_STDOUT = False
-        TestCimcCreateMpi.__host_ip_1 = DefineMpi.NODE_HOST_IP_1
-        TestCimcCreateMpi.__host_ip_2 = DefineMpi.NODE_HOST_IP_2
-        TestCimcCreateMpi.__cimc_1 = CIMC(DefineMpi.NODE_CIMC_IP_1)  
-        TestCimcCreateMpi.__cimc_2 = CIMC(DefineMpi.NODE_CIMC_IP_2)
+        TestCimcCreateMpiNegative.__host_ip_1 = DefineMpi.NODE_HOST_IP_1
+        TestCimcCreateMpiNegative.__host_ip_2 = DefineMpi.NODE_HOST_IP_2
+        TestCimcCreateMpiNegative.__cimc_1 = CIMC(DefineMpi.NODE_CIMC_IP_1)  
+        TestCimcCreateMpiNegative.__cimc_2 = CIMC(DefineMpi.NODE_CIMC_IP_2)
     
-        TestCimcCreateMpi.__cimc_1_adapter_index_list = TestCimcCreateMpi.__cimc_1.get_adapter_index_list_from_top()
-        TestCimcCreateMpi.__cimc_2_adapter_index_list = TestCimcCreateMpi.__cimc_2.get_adapter_index_list_from_top()
-        
+        TestCimcCreateMpiNegative.__cimc_1_adapter_index_list = TestCimcCreateMpiNegative.__cimc_1.get_adapter_index_list_from_top()
+        TestCimcCreateMpiNegative.__cimc_2_adapter_index_list = TestCimcCreateMpiNegative.__cimc_2.get_adapter_index_list_from_top()
     
     @classmethod
     def tearDownClass(cls):
-        TestCimcCreateMpi.__cimc_1._ssh.exit()
+        TestCimcCreateMpiNegative.__cimc_1._ssh.exit()
     
     
     def setUp(self):
         TestBase.init(self)
         self._logger.debug("\n\n====================== in setUp() ======================\n")
-        self._host_ip_1 = TestCimcCreateMpi.__host_ip_1
-        self._host_ip_2 = TestCimcCreateMpi.__host_ip_2
+        self._host_ip_1 = TestCimcCreateMpiNegative.__host_ip_1
+        self._host_ip_2 = TestCimcCreateMpiNegative.__host_ip_2
         
-        self._cimc_1 = TestCimcCreateMpi.__cimc_1
-        self._cimc_2 = TestCimcCreateMpi.__cimc_2
+        self._cimc_1 = TestCimcCreateMpiNegative.__cimc_1
+        self._cimc_2 = TestCimcCreateMpiNegative.__cimc_2
         
-        self._cimc_1_adapter_index_list = TestCimcCreateMpi.__cimc_1_adapter_index_list
-        self._cimc_2_adapter_index_list = TestCimcCreateMpi.__cimc_2_adapter_index_list
+        self._cimc_1_adapter_index_list = TestCimcCreateMpiNegative.__cimc_1_adapter_index_list
+        self._cimc_2_adapter_index_list = TestCimcCreateMpiNegative.__cimc_2_adapter_index_list
         
         self._cimc_1_adapter_count = len(self._cimc_1_adapter_index_list)
         self._cimc_2_adapter_count = len(self._cimc_2_adapter_index_list)
@@ -58,7 +56,7 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         pass
     
     
-    def test_create_1pf_16usnic_run_mpi(self):
+    def test_create_1pf_16usnic_run_mpi_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         adapter_index = self._cimc_1_adapter_index_list[0]        
@@ -86,14 +84,14 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         np = self.calculate_max_number_of_process(Define.CIMC_CORE_PER_NODE, count, DefineMpi.NODE_NUMBER)
         nvf = np/DefineMpi.NODE_NUMBER
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
-                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf]
+                            DefineMpi.MPI_PARAM_NP: np+2,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf+1]
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
         
     
-    def test_create_2pf_01usnic_run_mpi(self):
+    def test_create_2pf_01usnic_run_mpi_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         adapter_index = self._cimc_1_adapter_index_list[0]   
@@ -107,16 +105,18 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         self.create_usnic_check_host_usnic(self._cimc_1, self._host_ip_1, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
         self.create_usnic_check_host_usnic(self._cimc_2, self._host_ip_2, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
         
+        np = self.calculate_max_number_of_process(Define.CIMC_CORE_PER_NODE, count, DefineMpi.NODE_NUMBER)
+        nvf = np/DefineMpi.NODE_NUMBER
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_CMD: DefineMpi.MPI_CMD_ALL,
-                            DefineMpi.MPI_PARAM_NP: 2,
-                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [1, 1]
+                            DefineMpi.MPI_PARAM_CMD: DefineMpi.MPI_CMD_ALLTOALL,
+                            DefineMpi.MPI_PARAM_NP: np+2,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf+1, nvf+1]
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
         
         
-    def test_create_2pf_08usnic_run_mpi(self):
+    def test_create_2pf_08usnic_run_mpi_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         count = 8
@@ -152,6 +152,38 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
     def test_create_2pf_16usnic_run_mpi(self):
         self.init_test(inspect.stack()[0][3])
         
+        count = 8
+        usnic_count_dictionary = {
+                                "eth0": count,
+                                "eth1": count
+                                  }
+        
+        expected_usnic_count_list = []
+        for adapter_index in self._cimc_1_adapter_index_list:
+            expected_usnic_count_list.extend([count, count])
+            self.create_usnic_check_host_usnic(self._cimc_1, self._host_ip_1, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
+        expected_usnic_count_list = []
+        for adapter_index in self._cimc_2_adapter_index_list:
+            expected_usnic_count_list.extend([count, count])
+            self.create_usnic_check_host_usnic(self._cimc_2, self._host_ip_2, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
+        
+        np = self.calculate_max_number_of_process(Define.CIMC_CORE_PER_NODE, count, DefineMpi.NODE_NUMBER)
+        nvf = np/DefineMpi.NODE_NUMBER
+        expected_vf_used_count_list = [nvf, nvf]
+        if self._cimc_1_adapter_count == 2:
+            expected_vf_used_count_list = [nvf, nvf, nvf, nvf]
+        param_dictionary = {
+                            DefineMpi.MPI_PARAM_NP: np+2,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
+                            }
+        host_1 = NodeCompute(self._host_ip_1)
+        self.run_mpi(host_1, param_dictionary)
+    
+    
+    
+    def test_create_2pf_16usnic_run_mpi_negative(self):
+        self.init_test(inspect.stack()[0][3])
+        
         count = 16    
         usnic_count_dictionary = {
                                 "eth0": count,
@@ -173,14 +205,14 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         if self._cimc_1_adapter_count == 2:
             expected_vf_used_count_list = [nvf, nvf, nvf, nvf]
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_NP: np+2,
                             DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
     
     
-    def test_create_2pf_32usnic_run_mpi(self):
+    def test_create_2pf_32usnic_run_mpi_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         count = 32
@@ -203,14 +235,14 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         if self._cimc_1_adapter_count == 2:
             expected_vf_used_count_list = [nvf, nvf, nvf, nvf]
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_NP: np+2,
                             DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
         
         
-    def test_create_2pf_64usnic_run_mpi(self):
+    def test_create_2pf_64usnic_run_mpi_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         count = 64   
@@ -233,24 +265,14 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         if self._cimc_1_adapter_count == 2:
             expected_vf_used_count_list = [nvf, nvf, nvf, nvf]
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
-                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
-                            }
-        host_1 = NodeCompute(self._host_ip_1)
-        self.run_mpi(host_1, param_dictionary)
-        
-        expected_vf_used_count_list = [nvf/2, nvf/2]
-        if self._cimc_1_adapter_count == 2:
-            expected_vf_used_count_list = [nvf/2, nvf/2, nvf/2, nvf/2]
-        param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np/2,
+                            DefineMpi.MPI_PARAM_NP: 128,
                             DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
    
     
-    def test_create_2pf_diff_usnic_run_mpi(self):
+    def test_create_2pf_diff_usnic_run_mpi_negative(self):
         self.init_test(inspect.stack()[0][3])
         
         adapter_index = self._cimc_1_adapter_index_list[0]   
@@ -261,66 +283,13 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         expected_usnic_count_list = [65, 19]
         self.create_usnic_check_host_usnic(self._cimc_1, self._host_ip_1, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
         
-        np = self.calculate_max_number_of_process(Define.CIMC_CORE_PER_NODE, 19, DefineMpi.NODE_NUMBER)
-        nvf = np/DefineMpi.NODE_NUMBER
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
-                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf, nvf]
+                            DefineMpi.MPI_PARAM_NP: 38,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [19, 19]
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
-    
-    
-    def test_create_4pf_16usnic(self):
-        self.init_test(inspect.stack()[0][3])
         
-        count = 16
-        host_eth_if_dictionary = {
-                                "eth2": {"uplink": 0, "vlan": 50, "vlan-mode": "trunk"}, 
-                                "eth3": {"uplink": 0, "vlan": 60, "vlan-mode": "trunk"}
-                                }
-        usnic_count_dictionary = {
-                                "eth0": count,
-                                "eth1": count,
-                                "eth2": count,
-                                "eth3": count
-                                  }
-        expected_usnic_count_list = [count, count, count, count]
-        
-        host_1 = NodeCompute(self._host_ip_1)
-        next_available_eth_if_list = host_1.get_next_no_ip_eth_if_name_list(2)
-        host_if_ip_dictionary_1 = {
-                                 next_available_eth_if_list[0]: "50.35.50." + Util.get_ip_field(DefineMpi.NODE_CIMC_IP_1, 3)+ "/24",
-                                 next_available_eth_if_list[1]: "50.35.60." + Util.get_ip_field(DefineMpi.NODE_CIMC_IP_1, 3)+ "/24",
-                                 }
-        host_if_ip_dictionary_2 = {
-                                 next_available_eth_if_list[0]: "50.35.50." + Util.get_ip_field(DefineMpi.NODE_CIMC_IP_2, 3)+ "/24",
-                                 next_available_eth_if_list[1]: "50.35.60." + Util.get_ip_field(DefineMpi.NODE_CIMC_IP_2, 3)+ "/24",
-                                 }
-        
-        adapter_index = self._cimc_1_adapter_index_list[0]
-        self.create_pf_and_usnic_check_host_usnic(self._cimc_1, self._host_ip_1, adapter_index, host_eth_if_dictionary, usnic_count_dictionary, expected_usnic_count_list, host_if_ip_dictionary_1)
-        self.create_pf_and_usnic_check_host_usnic(self._cimc_2, self._host_ip_2, adapter_index, host_eth_if_dictionary, usnic_count_dictionary, expected_usnic_count_list, host_if_ip_dictionary_2)
-        
-        if self._cimc_1_adapter_count == 2:
-            adapter_index = self._cimc_1_adapter_index_list[1]
-            usnic_count_dictionary = {
-                                "eth0": count,
-                                "eth1": count,
-                                  }
-            expected_usnic_count_list = [-1, -1, -1, -1, count, count]
-            self.create_usnic_check_host_usnic(self._cimc_1, self._host_ip_1, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
-            self.create_usnic_check_host_usnic(self._cimc_2, self._host_ip_2, adapter_index, usnic_count_dictionary, expected_usnic_count_list)
-            
-        np = self.calculate_max_number_of_process(Define.CIMC_CORE_PER_NODE, count, DefineMpi.NODE_NUMBER)
-        nvf = np/DefineMpi.NODE_NUMBER
-        param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
-                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf, nvf, nvf, nvf]
-                            }
-        host_1 = NodeCompute(self._host_ip_1)
-        self.run_mpi(host_1, param_dictionary)
-
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

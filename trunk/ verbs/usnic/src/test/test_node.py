@@ -21,14 +21,14 @@ if __name__ == '__main__':
     #Util.run_step_list(head_node.get_ssh(), file_json_step)
     
     
-    '''
-    compute_node = NodeCompute("node01")
-    compute_node.send_expect_prompt("ls")
-    compute_node.send_expect_prompt("pwd")
-    eth_if_list = compute_node.get_eth_if_list()
+    
+    compute_node = NodeCompute("bcnode59")
+    #compute_node.send_expect_prompt("ls")
+    #compute_node.send_expect_prompt("pwd")
+    eth_if_list = compute_node.get_next_no_ip_eth_if_name(2)
     print eth_if_list
     compute_node._ssh.send("exit")
-    '''
+    
     '''
     node = None
     probe_max_count = 10
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     ret = node.get_usnic_used_count_list()
     print ret 
     '''
-    
+    '''
     define.PEXPECT_OUTPUT_STDOUT = False
     host = NodeCompute("bcnode13")
     params = {
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             }
     
     host.run_mpi(params)
-    
+    '''
     
     
     

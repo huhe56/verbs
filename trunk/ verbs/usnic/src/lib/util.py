@@ -236,5 +236,11 @@ class Util(object):
                 return node
             
             
+    @staticmethod
+    def get_ip_field(ip, field_index):
+        ip_field_list = ip.split(".")
+        return ip_field_list[field_index]
+    
+    
         
     

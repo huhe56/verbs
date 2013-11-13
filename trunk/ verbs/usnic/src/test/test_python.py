@@ -26,4 +26,5 @@ if __name__ == '__main__':
     Util.run_test_step_list(file_json_step)
     '''
     
+    print Util.get_ip_field("50.35.10.127", 3)
     
