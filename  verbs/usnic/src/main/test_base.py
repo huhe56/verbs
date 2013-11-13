@@ -5,10 +5,8 @@ Created on Oct 31, 2013
 '''
 
 import time
-import pexpect
 
 from main.define import Define, DefineMpi
-from lib.node_compute import NodeCompute
 from lib.util import Util
 from lib.logger import MyLogger
 from utils.utils import Utils
@@ -50,11 +48,11 @@ class TestBase(object):
         if DefineMpi.MPI_PARAM_MSG in param_dictionary.keys():
             expected_message = param_dictionary[DefineMpi.MPI_PARAM_MSG]
         if expected_message in DefineMpi.SHELL_STATUS_0_MESSAGE_LIST:
-            self.assertEqual(shell_status, 0)
             if host.mpi_run_has_error():
                 raise Exception("mpi run has error")
             if host.mpi_run_has_aborted():
                 raise Exception("mpi run aborted")
+            self.assertEqual(shell_status, 0)
         elif expected_message in DefineMpi.SHELL_STATUS_1_MESSAGE_LIST:
             self.assertEqual(shell_status, 1)
             
@@ -64,7 +62,7 @@ class TestBase(object):
         
         
     def create_usnic(self, cimc, adapter_index, usnic_count_dictionary):
-        for host_eth_if, usnic_count in usnic_count_dictionary.iteritems():
+        for host_eth_if, usnic_count in sorted(usnic_count_dictionary.iteritems()):
             cimc.create_usnic_from_top(adapter_index, host_eth_if, usnic_count)
             created_usnic_count = cimc.get_usnic_count()
             self.assertEqual(created_usnic_count, usnic_count)
@@ -72,10 +70,13 @@ class TestBase(object):
     
     def check_host_usnic(self, host, expected_usnic_count_list):
         configured_usnic_count_list = host.get_usnic_configured_count_list()        
+        self._logger.info("expected configured usnic count: ")
+        self._logger.info(expected_usnic_count_list)
+        self._logger.info("actual configured usnic count: ")
+        self._logger.info(configured_usnic_count_list)
         for configured_count, expected_count in zip(configured_usnic_count_list, expected_usnic_count_list):
             if expected_count > 0:
                 self.assertEqual(configured_count, expected_count)
-        host.exit()
     
     
     def create_usnic_check_host_usnic(self, cimc, host_ip, adapter_index, usnic_count_dictionary, expected_usnic_count_list):
@@ -94,7 +95,7 @@ class TestBase(object):
         
     
     def set_host_if_ip(self, host, host_if_ip_dictionary):
-        for int_if, ip_mask in host_if_ip_dictionary.iteritems():
+        for int_if, ip_mask in sorted(host_if_ip_dictionary.iteritems()):
             host.set_eth_if_ip(int_if, ip_mask)
         
     
@@ -115,4 +116,14 @@ class TestBase(object):
                 self.check_host_usnic(host_ip, expected_usnic_count_list)
                 
                 
+    def calculate_max_number_of_process(self, number_of_core, number_of_vf, number_of_node, vf_sharing=True):
+        if number_of_core > number_of_vf:
+            return number_of_vf * number_of_node
+        else:
+            return number_of_core * number_of_node
+        
+    
+    
+    
+        
     

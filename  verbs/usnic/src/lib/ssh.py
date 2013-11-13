@@ -5,7 +5,6 @@ Created on Aug 8, 2013
 '''
 
 import pexpect, sys, re 
-import datetime
 
 from main import define
 from main.define import Define
@@ -36,10 +35,10 @@ class SSH(object):
             _session.logfile_read = file(log_file, "w")
         ret = _session.expect([pexpect.TIMEOUT, pexpect.EOF, Define.PATTERN_SSH_NEW_KEY, Define.PATTERN_PROMPT, Define.PATTERN_PASSWORD])
         if ret == 0:
-            self._logger.error('timeout when ssh to ' + hostname)
+            self._logger.warn('timeout when ssh to ' + hostname)
             return None
         elif ret == 1:
-            self._logger.error('end of file when ssh to ' + hostname)
+            self._logger.warn('end of file when ssh to ' + hostname)
             return None
         elif ret == 2:
             _session.sendline('yes')
@@ -47,7 +46,7 @@ class SSH(object):
             _session.sendline(password)
             ret = _session.expect([pexpect.TIMEOUT, Define.PATTERN_PROMPT])
             if ret == 0:
-                self._logger.error("timeout after sending password")
+                self._logger.warn("timeout after sending password")
                 return None
         elif ret == 3:
             pass
@@ -55,7 +54,7 @@ class SSH(object):
             _session.sendline(password)
             ret = _session.expect([pexpect.TIMEOUT, Define.PATTERN_PROMPT])
             if ret == 0:
-                self._logger.error("timeout after sending password")
+                self._logger.warn("timeout after sending password")
                 return None
         return _session
     

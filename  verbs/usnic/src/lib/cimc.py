@@ -32,6 +32,27 @@ class CIMC(FW):
         self.scope_chassis()
         self.scope_adapter(adapter_index)
         
+        
+    def get_adapter_index_list_from_top(self):
+        self.scope_chassis_from_top()
+        return self.get_adapter_index_list()
+    
+    
+    def show_adapter_brief(self):
+        self._ssh.send_expect_prompt("show adapter")
+        
+    
+    def get_adapter_index_list(self):
+        self.show_adapter_brief()
+        output = self.get_ssh().get_output()
+        lines = output.split(Define.PATTERN_NEW_LINE)
+        ret = []
+        for line in lines:
+            items = re.compile("\s+").split(line)
+            if items[1] == Define.CIMC_ADAPTER_UCS and items[2] == Define.CIMC_ADAPTER_VIC:
+                ret.append(int(items[0]))
+        return sorted(ret) 
+    
     
     ''' usnic '''
         
@@ -55,7 +76,7 @@ class CIMC(FW):
         if not self.is_usnic_created():
             self.create_usnic(host_eth_if, count)
         else:
-            self._logger.info("usnic already exists at adapter " + str(adapter_index) + ", " + host_eth_if)
+            #self._logger.info("usnic already exists at adapter " + str(adapter_index) + ", " + host_eth_if)
             self.scope_usnic()
             self.set_usnic_count(count)
         
@@ -151,11 +172,12 @@ class CIMC(FW):
             self._ssh.send_expect_prompt("delete host-eth-if " + host_eth_if)
             self.commit()
         else:
-            self._logger.info(host_eth_if + " is default interface, can not be deleted")
+            #self._logger.info(host_eth_if + " is default interface, can not be deleted")
+            pass
         
         
     def create_host_eth_if_from_top(self, cimc, adapter_index, host_eth_if_dictionary):
-        for host_eth_if, host_eth_if_setting in host_eth_if_dictionary.iteritems():
+        for host_eth_if, host_eth_if_setting in sorted(host_eth_if_dictionary.iteritems()):
             if host_eth_if not in Define.CIMC_DEFAULT_ETH_IF_LIST:
                 cimc.scope_adapter_from_top(adapter_index)
                 uplink_index = host_eth_if_setting["uplink"]
@@ -168,7 +190,7 @@ class CIMC(FW):
                 self.commit()
             else:
                 self._logger.info(host_eth_if + " is default interface, can not be created")
-        
+            
         
     def delete_all_host_eth_if_from_top(self, adapter_index):
         self.scope_adapter_from_top(adapter_index)
@@ -181,10 +203,10 @@ class CIMC(FW):
             self.delete_host_eth_if(host_eth_if)
         host_eth_if_list = self.get_host_eth_if_list()
         if host_eth_if_list != Define.CIMC_DEFAULT_ETH_IF_LIST:
-            self._logger.error("host eth if other than eth0 and eth1 is not deleted")
+            #self._logger.error("host eth if other than eth0 and eth1 is not deleted")
             return False
         else:
-            self._logger.info("non default host eth if have been deleted")
+            #self._logger.info("non default host eth if have been deleted")
             return True
             
     

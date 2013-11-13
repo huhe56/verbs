@@ -27,6 +27,15 @@ class RedHat(Base):
         Base.__init__(self, SSH(hostname, username, password))
         self._eth_if_list = None
         
+        
+    def get_next_no_ip_eth_if_name_list(self, count):
+        eth_if_name_list = self.get_eth_if_name_list()
+        i = len(eth_if_name_list)
+        last_eth_if_name = eth_if_name_list[i-1]
+        last_eth_if_index = int(last_eth_if_name.replace("eth", ""))
+        ret_list = ["eth" + str(last_eth_if_index + j) for j in range(1, count+1)]
+        return ret_list
+        
     
     def set_eth_if_ip(self, eth_if, ip_mask):
         self._ssh.send("su -")

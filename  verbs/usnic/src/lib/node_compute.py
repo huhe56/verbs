@@ -4,7 +4,7 @@ Created on Aug 14, 2013
 @author: huhe
 '''
 
-import re, threading
+import re, threading, time
 
 from main.define import Define, DefineMpi
 from lib.redhat import RedHat
@@ -52,12 +52,21 @@ class NodeCompute(RedHat):
             self._logger.info(expected_vf_used_count_list)
             self._logger.info("actual vf used count list: ")
             self._logger.info(actual_vf_used_count_list)
-            if expected_vf_used_count_list != actual_vf_used_count_list:
-                self._logger.warn("vf used counts not equal")
-                self._vf_used_count_equal_dictionary[host_ip] = False
-            else:
+            
+            vf_used_count_equal = True
+            for configured_count, expected_count in zip(actual_vf_used_count_list, expected_vf_used_count_list):
+                if expected_count >= 0:
+                    if configured_count != expected_count:
+                        vf_used_count_equal = False
+                        break
+                    
+            if vf_used_count_equal:
                 self._logger.info("vf used counts equal")
                 self._vf_used_count_equal_dictionary[host_ip] = True
+            else:
+                self._logger.error("vf used counts not equal")
+                self._vf_used_count_equal_dictionary[host_ip] = False
+                        
             host.exit()
             
             
@@ -84,10 +93,9 @@ class NodeCompute(RedHat):
             cmd = param_dictionary[DefineMpi.MPI_PARAM_CMD]
         if DefineMpi.MPI_PARAM_MSG in key_list:
             msg = param_dictionary[DefineMpi.MPI_PARAM_MSG]
-        if DefineMpi.MPI_PARAM_CHECK_VF_USED_COUNT in key_list:
-            check_used_vf_count_flag = param_dictionary[DefineMpi.MPI_PARAM_CHECK_VF_USED_COUNT]
         if DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST in key_list:
             vf_used_count_list = param_dictionary[DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST]
+            check_used_vf_count_flag = True
         
         host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_ip_list)])
         np_str   = " ".join([DefineMpi.MPI_PARAM_NP, str(np)])
@@ -105,6 +113,7 @@ class NodeCompute(RedHat):
         self._ssh.send(cmd_str)
         
         if check_used_vf_count_flag and cmd != DefineMpi.MPI_CMD_PINGPONG:
+            time.sleep(10)
             find_used_vf_count_thread = threading.Thread(target=self.check_used_vf_count, args=(host_ip_list, vf_used_count_list))
             find_used_vf_count_thread.daemon = True
             find_used_vf_count_thread.start()
@@ -115,7 +124,7 @@ class NodeCompute(RedHat):
         
         if re.search(msg, self._current_output, re.IGNORECASE):
             self._logger.info("found message: " + msg)
-            if msg == DefineMpi.MPI_MESSAGE_FINISH:
+            if msg in DefineMpi.SHELL_STATUS_0_MESSAGE_LIST:
                 if check_used_vf_count_flag:
                     for host_ip, result in self._vf_used_count_equal_dictionary.iteritems():
                         self._logger.info(host_ip)
@@ -126,7 +135,15 @@ class NodeCompute(RedHat):
             else:
                 return True
         else:
-            self._logger.info("could not find message: " + msg)
+            self._logger.error("could not find message: " + msg)
+            if self.mpi_run_has_error():
+                self._logger.error("found error message")
+            if self.mpi_run_has_aborted():
+                self._logger.error("found abort message")
+            if self.mpi_run_not_enough_core():
+                self._logger.error("found not enough core message")
+            if self.mpi_run_not_enough_usnic():
+                self._logger.error("found not enough usnic message")
             return False
     
     
@@ -139,6 +156,19 @@ class NodeCompute(RedHat):
         
     def mpi_run_has_aborted(self):
         if re.search(DefineMpi.MPI_MESSAGE_ABORT, self._current_output, re.IGNORECASE):
+            return True
+        else:
+            return False
+        
+    def mpi_run_not_enough_usnic(self):
+        if re.search(DefineMpi.MPI_MESSAGE_NOT_ENOUGH_VNIC, self._current_output, re.IGNORECASE):
+            return True
+        else:
+            return False
+        
+        
+    def mpi_run_not_enough_core(self):
+        if re.search(DefineMpi.MPI_MESSAGE_NOT_ENOUGH_CORE, self._current_output, re.IGNORECASE):
             return True
         else:
             return False
