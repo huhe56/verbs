@@ -49,7 +49,7 @@ class CIMC(FW):
         ret = []
         for line in lines:
             items = re.compile("\s+").split(line)
-            if items[1] == Define.CIMC_ADAPTER_UCS and items[2] == Define.CIMC_ADAPTER_VIC:
+            if items[1] == Define.CIMC_ADAPTER_UCS and items[2] == Define.CIMC_ADAPTER_VIC and items[3] in Define.CIMC_ADAPTER_SUPPORTED_LIST:
                 ret.append(int(items[0]))
         return sorted(ret) 
     
@@ -174,6 +174,11 @@ class CIMC(FW):
         else:
             #self._logger.info(host_eth_if + " is default interface, can not be deleted")
             pass
+        
+        
+    def delete_host_eth_if_from_top(self, adapter_index, host_eth_if):
+        self.scope_adapter_from_top(adapter_index)
+        self.delete_host_eth_if(host_eth_if)
         
         
     def create_host_eth_if_from_top(self, cimc, adapter_index, host_eth_if_dictionary):

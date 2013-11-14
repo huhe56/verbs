@@ -33,7 +33,7 @@ class Base(object):
     
     def set_ssh(self, ssh):
         if ssh.is_login_ok():
-            self._logger.debug("login is ok and set in Base")
+            #self._logger.debug("login is ok and set in Base")
             self._ssh = ssh
             
             
