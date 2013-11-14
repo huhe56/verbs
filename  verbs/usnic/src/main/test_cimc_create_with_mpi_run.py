@@ -23,7 +23,7 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         TestCimcCreateMpi.__host_ip_2 = DefineMpi.NODE_HOST_IP_2
         TestCimcCreateMpi.__cimc_1 = CIMC(DefineMpi.NODE_CIMC_IP_1)  
         TestCimcCreateMpi.__cimc_2 = CIMC(DefineMpi.NODE_CIMC_IP_2)
-    
+            
         TestCimcCreateMpi.__cimc_1_adapter_index_list = TestCimcCreateMpi.__cimc_1.get_adapter_index_list_from_top()
         TestCimcCreateMpi.__cimc_2_adapter_index_list = TestCimcCreateMpi.__cimc_2.get_adapter_index_list_from_top()
         
@@ -47,6 +47,7 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         
         self._cimc_1_adapter_count = len(self._cimc_1_adapter_index_list)
         self._cimc_2_adapter_count = len(self._cimc_2_adapter_index_list)
+        
         
         for adapter_index in self._cimc_1_adapter_index_list:
             self._cimc_1.delete_all_host_eth_if_from_top(adapter_index)
@@ -320,7 +321,42 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
                             }
         host_1 = NodeCompute(self._host_ip_1)
         self.run_mpi(host_1, param_dictionary)
-
+        
+        ### delete one PF's usnic, then run mpi
+        self._logger.info("test run after removing usnic from eth2")
+        self._cimc_1.delete_usnic_from_top(adapter_index, "eth2")
+        self._cimc_1.power_cycle()
+        Util.wait_for_node_to_boot_up(self._host_ip_1)
+        
+        self._cimc_2.delete_usnic_from_top(adapter_index, "eth2")
+        self._cimc_2.power_cycle()
+        Util.wait_for_node_to_boot_up(self._host_ip_2)
+        
+        param_dictionary = {
+                            DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf, nvf, 0]
+                            }
+        host_1 = NodeCompute(self._host_ip_1)
+        self.run_mpi(host_1, param_dictionary)
+        
+        
+        ### delete one PF, then run mpi
+        self._logger.info("test mpi run after remove eth3")
+        self._cimc_1.delete_host_eth_if_from_top(adapter_index, "eth3")
+        self._cimc_1.power_cycle()
+        Util.wait_for_node_to_boot_up(self._host_ip_1)
+        
+        self._cimc_2.delete_host_eth_if_from_top(adapter_index, "eth3")
+        self._cimc_2.power_cycle()
+        Util.wait_for_node_to_boot_up(self._host_ip_2)
+        
+        param_dictionary = {
+                            DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: [nvf, nvf]
+                            }
+        host_1 = NodeCompute(self._host_ip_1)
+        self.run_mpi(host_1, param_dictionary)
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -4,7 +4,7 @@ Created on Aug 14, 2013
 @author: huhe
 '''
 
-import time, re
+import re
 
 from main.define import Define
 from lib.base import Base

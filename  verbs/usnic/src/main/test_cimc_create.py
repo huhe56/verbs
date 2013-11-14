@@ -59,11 +59,12 @@ class TestCimcCreate(unittest.TestCase, TestBase):
     def test_create_1pf_usnic(self):
         self.init_test(inspect.stack()[0][3])
         
-        # remove usnic from eth1 
         adapter_index = self._cimc_1_adapter_index_list[0]   
              
+        # remove usnic from eth1 
         host_eth_if = "eth1"
         self._cimc_1.delete_usnic_from_top(adapter_index, host_eth_if)
+        
         
         host_eth_if = "eth0"
         count = 1
@@ -83,8 +84,9 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self.init_test(inspect.stack()[0][3])
         test_type = False
         
-        ### remove usnic from eth1 
         adapter_index = self._cimc_1_adapter_index_list[0]
+        
+        ### remove usnic from eth1 
         host_eth_if = "eth1"
         self._cimc_1.delete_usnic_from_top(adapter_index, host_eth_if)
         
@@ -96,9 +98,10 @@ class TestCimcCreate(unittest.TestCase, TestBase):
     def test_create_1pf_usnic_string_negative(self):
         self.init_test(inspect.stack()[0][3])
         test_type = False
+         
+        adapter_index = self._cimc_1_adapter_index_list[0]       
         
         ### remove usnic from eth1 
-        adapter_index = self._cimc_1_adapter_index_list[0]        
         host_eth_if = "eth1"
         self._cimc_1.delete_usnic_from_top(adapter_index, host_eth_if)
         
@@ -111,8 +114,9 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self.init_test(inspect.stack()[0][3])
         test_type = False
         
-        ### remove usnic from eth1 
-        adapter_index = self._cimc_1_adapter_index_list[0]        
+        adapter_index = self._cimc_1_adapter_index_list[0]   
+        
+        ### remove usnic from eth1      
         host_eth_if = "eth1"
         self._cimc_1.delete_usnic_from_top(adapter_index, host_eth_if)
         
@@ -194,6 +198,10 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         max_plus_1_count = remaining_count + count + 1
         self.check_set_usnic(adapter_index, "eth0", max_plus_1_count, False)
         
+        self._cimc_1.scope_adapter_from_top(adapter_index)
+        for i in range(2, 16):
+            self._cimc_1.delete_host_eth_if("eth" + str(i))
+            
     
     def create_same_usnic(self, adapter_index, host_eth_if_list, count):
         for host_eth_if in host_eth_if_list:
