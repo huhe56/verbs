@@ -4,6 +4,9 @@ Created on Aug 20, 2013
 @author: huhe
 '''
 
+import datetime
+
+
 class Utils(object):
     '''
     classdocs
@@ -44,3 +47,13 @@ class Utils(object):
     def set_prefix_zero_string(index, length):
         return str(index).zfill(length)
     
+    
+    @staticmethod
+    def get_current_time_string():
+        return datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
+        
+        
+        
+        
+        
+        
