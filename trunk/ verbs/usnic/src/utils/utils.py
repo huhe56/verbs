@@ -4,7 +4,7 @@ Created on Aug 20, 2013
 @author: huhe
 '''
 
-import datetime
+import datetime, os, shutil
 
 
 class Utils(object):
@@ -53,7 +53,21 @@ class Utils(object):
         return datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
         
         
+    @staticmethod
+    def move_all_files(src, dst):
+        files = os.listdir(src)
+        for file1 in files:
+            file1_path = src + file1
+            if os.path.isfile(file1_path):
+                shutil.move(file1_path, dst)
         
-        
+    
+    @staticmethod
+    def delete_all_files(dst):
+        files = os.listdir(dst)
+        for file1 in files:
+            file1_path = dst + file1
+            if os.path.isfile(file1_path):
+                os.remove(file1_path)
         
         
