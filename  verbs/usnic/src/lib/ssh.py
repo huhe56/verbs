@@ -4,7 +4,7 @@ Created on Aug 8, 2013
 @author: huhe
 '''
 
-import pexpect, sys, re 
+import pexpect, sys, re, os
 
 from main import define
 from main.define import Define
@@ -21,6 +21,7 @@ class SSH(object):
         self._logger = MyLogger.getLogger(self.__class__.__name__)
         self._session = self.login(hostname, username, password)
         self._pattern_prompt = Define.PATTERN_PROMPT
+        self._log_file = None
         
 
     def login(self, hostname, username, password):        
@@ -31,15 +32,17 @@ class SSH(object):
             _session.logfile_read = sys.stdout
         else:
             #Utils.append_file(Define.PATH_USNIC_LOG_FILE_ALL, Define.PATH_USNIC_LOG_FILE)
-            log_file = Define.PATH_USNIC_LOG + Utils.get_current_time_string() + "_" + hostname
-            self._logger.info(log_file)
-            _session.logfile_read = file(log_file, "w")
+            self._log_file = Define.PATH_USNIC_LOG + hostname + "_" + Utils.get_current_time_string()
+            self._logger.info(self._log_file)
+            _session.logfile_read = file(self._log_file, "w")
         ret = _session.expect([pexpect.TIMEOUT, pexpect.EOF, Define.PATTERN_SSH_NEW_KEY, Define.PATTERN_PROMPT, Define.PATTERN_PASSWORD])
         if ret == 0:
             self._logger.warn('timeout when ssh to ' + hostname)
+            os.remove(self._log_file)
             return None
         elif ret == 1:
             self._logger.warn('end of file when ssh to ' + hostname)
+            os.remove(self._log_file)
             return None
         elif ret == 2:
             _session.sendline('yes')
@@ -48,6 +51,7 @@ class SSH(object):
             ret = _session.expect([pexpect.TIMEOUT, Define.PATTERN_PROMPT])
             if ret == 0:
                 self._logger.warn("timeout after sending password")
+                os.remove(self._log_file)
                 return None
         elif ret == 3:
             pass
@@ -56,6 +60,7 @@ class SSH(object):
             ret = _session.expect([pexpect.TIMEOUT, Define.PATTERN_PROMPT])
             if ret == 0:
                 self._logger.warn("timeout after sending password")
+                os.remove(self._log_file)
                 return None
         return _session
     

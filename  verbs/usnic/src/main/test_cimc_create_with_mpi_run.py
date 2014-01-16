@@ -35,7 +35,7 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
     
     def setUp(self):
         TestBase.init(self)
-        self._logger.debug("\n\n====================== in setUp() ======================\n")
+        #self._logger.debug("\n\n====================== in setUp() ======================\n")
         self._host_ip_1 = TestCimcCreateMpi.__host_ip_1
         self._host_ip_2 = TestCimcCreateMpi.__host_ip_2
         

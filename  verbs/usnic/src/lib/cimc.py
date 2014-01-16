@@ -26,6 +26,11 @@ class CIMC(FW):
         self._password = password
         FW.__init__(self, SSH(hostname, username, password))        
    
+   
+    def show_cimc_detail(self):
+        self.scope_top()
+        self._ssh.send_expect_prompt("show cimc detail")
+       
         
     def scope_adapter_from_top(self, adapter_index):
         self.scope_top()
@@ -123,7 +128,8 @@ class CIMC(FW):
     
     def get_usnic_count_at_host_eth_if(self):
         self.show_usnic_brief_at_host_eth_if()
-        output = self._ssh.get_output()
+        output = self._ssh.get_output()#NODE_HOST_IP_2  = 'bcnode20'
+    #NODE_CIMC_IP_1  = '10.193.212.
         lines = output.split(Define.PATTERN_NEW_LINE)
         if len(lines) < 3:
             return 0
@@ -208,7 +214,8 @@ class CIMC(FW):
             self.delete_host_eth_if(host_eth_if)
         host_eth_if_list = self.get_host_eth_if_list()
         if host_eth_if_list != Define.CIMC_DEFAULT_ETH_IF_LIST:
-            #self._logger.error("host eth if other than eth0 and eth1 is not deleted")
+            #self._logger.error("host eth if other than eth0 and e#NODE_HOST_IP_2  = 'bcnode20'
+    #NODE_CIMC_IP_1  = '10.193.212.th1 is not deleted")
             return False
         else:
             #self._logger.info("non default host eth if have been deleted")

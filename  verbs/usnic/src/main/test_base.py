@@ -5,6 +5,7 @@ Created on Oct 31, 2013
 '''
 
 import time
+import os
 
 from main.define import Define, DefineMpi
 from lib.util import Util
@@ -21,12 +22,13 @@ class TestBase(object):
 
     def init(self):
         self._logger = MyLogger.getLogger(self.__class__.__name__)    
+        self._current_test_log_path = None
         
     
     def check_shell_status(self, positive=True):
         time.sleep(5)
         self._ssh.send("echo status=$?")
-        status_str = None
+        status_str = None#self._logger.debug("\n\n====================== in setUp() ======================")
         if positive:
             status_str = "status=0"
         else:
@@ -39,6 +41,14 @@ class TestBase(object):
         message = "\n\n====================== " + test_name + " =====================\n\n"
         self._logger.info(message)
         Utils.write_file(Define.PATH_USNIC_LOG_FILE_ALL, message)
+        #self._current_test_log_path = Define.PATH_USNIC_LOG + test_name + "_" + Utils.get_current_time_string() + "/"
+        #os.makedirs(self._current_test_log_path)
+        
+    
+    def finish_test(self):
+        #Utils.move_all_files(Define.PATH_USNIC_LOG, self._current_test_log_path)        
+        #Utils.delete_all_files(Define.PATH_USNIC_LOG)
+        pass
     
 
     def run_mpi(self, host, param_dictionary):

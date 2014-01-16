@@ -29,16 +29,20 @@ class TestCimcCreate(unittest.TestCase, TestBase):
     @classmethod
     def tearDownClass(cls):
         TestCimcCreate.__cimc_1._ssh.exit()
+        TestCimcCreate.__cimc_2._ssh.exit()
     
     
     def setUp(self):
         TestBase.init(self)
-        self._logger.debug("\n\n====================== in setUp() ======================")
+        #self._logger.debug("\n\n====================== in setUp() ======================")
         self._host_ip_1 = TestCimcCreate.__host_ip_1
         self._host_ip_2 = TestCimcCreate.__host_ip_2
         
         self._cimc_1 = TestCimcCreate.__cimc_1
         self._cimc_2 = TestCimcCreate.__cimc_2
+        
+        self._cimc_1.show_cimc_detail()
+        self._cimc_2.show_cimc_detail()
         
         self._cimc_1_adapter_index_list = TestCimcCreate.__cimc_1_adapter_index_list
         self._cimc_2_adapter_index_list = TestCimcCreate.__cimc_2_adapter_index_list
@@ -53,7 +57,7 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         
         
     def tearDown(self):
-        pass
+        self.finish_test()
 
     
     def test_create_1pf_usnic(self):
@@ -164,6 +168,7 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         self.init_test(inspect.stack()[0][3])
         
         adapter_index = self._cimc_1_adapter_index_list[0]
+        
         count = 1
         for host_eth_if in Define.CIMC_DEFAULT_ETH_IF_LIST:
             self._cimc_1.create_usnic_from_top(adapter_index, host_eth_if, count)
@@ -198,10 +203,12 @@ class TestCimcCreate(unittest.TestCase, TestBase):
         max_plus_1_count = remaining_count + count + 1
         self.check_set_usnic(adapter_index, "eth0", max_plus_1_count, False)
         
+        self._logger.debug("about to delete host eth if 2 - 15")
+        self.check_set_usnic(adapter_index, "eth0", count, True)
         self._cimc_1.scope_adapter_from_top(adapter_index)
         for i in range(2, 16):
             self._cimc_1.delete_host_eth_if("eth" + str(i))
-            
+        
     
     def create_same_usnic(self, adapter_index, host_eth_if_list, count):
         for host_eth_if in host_eth_if_list:
@@ -216,7 +223,7 @@ class TestCimcCreate(unittest.TestCase, TestBase):
             self.assertEqual(count, actual_count)
         else:
             self.assertNotEqual(count, actual_count)
-            
+    
         
     def check_set_usnic(self, adapter_index, host_eth_if, count, test_type=True):
         self._cimc_1.scope_usnic_from_top(adapter_index, host_eth_if)
@@ -226,7 +233,7 @@ class TestCimcCreate(unittest.TestCase, TestBase):
             self.assertEqual(count, actual_count)
         else:
             self.assertNotEqual(count, actual_count)
-        
+    
         
 
 if __name__ == "__main__":
