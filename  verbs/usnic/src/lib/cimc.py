@@ -70,7 +70,7 @@ class CIMC(FW):
         self.scope_usnic()
         
     
-    def create_usnic(self, host_eth_if, count):
+    def create_usnic(self, count):
         self._ssh.send_expect_prompt("create usnic-config 0")
         self.set_usnic_count(count)
         self.commit()
@@ -78,8 +78,12 @@ class CIMC(FW):
         
     def create_usnic_from_top(self, adapter_index, host_eth_if, count):
         self.scope_host_eth_if_from_top(adapter_index, host_eth_if)
+        self.create_usnic_at_host_eth_if(count)
+            
+            
+    def create_usnic_at_host_eth_if(self, count):
         if not self.is_usnic_created():
-            self.create_usnic(host_eth_if, count)
+            self.create_usnic(count)
         else:
             #self._logger.info("usnic already exists at adapter " + str(adapter_index) + ", " + host_eth_if)
             self.scope_usnic()
@@ -223,6 +227,14 @@ class CIMC(FW):
             
     
     ''' misc '''
+        
+    def set_property(self, key, value):
+        self._ssh.send_expect_prompt("set " + key + " " + str(value))
+        
+    
+    def show_detail(self):
+        self._ssh.send_expect_prompt("show detail")
+        
         
     def power_cycle(self):
         self.scope_chassis_from_top()
