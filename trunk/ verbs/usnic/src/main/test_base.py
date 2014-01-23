@@ -134,6 +134,56 @@ class TestBase(object):
         
     
     
+    def create_usnic_mtu_cos(self, cimc, host_ip, adapter_index_list, usnic_count, mtu, cos):
+        
+        cimc_eth_properties = {
+            "eth0": {
+                "usnic":    usnic_count,
+                "mtu":      mtu,
+                "cos":      cos
+            },
+            "eth1": {
+                "usnic":    usnic_count,
+                "mtu":      mtu,
+                "cos":      cos
+            }
+        }
+        
+        expected_usnic_count_list = []
+        host_usnic_eth_if_list = []
+        host_usnic_eth_if_current_index = DefineMpi.HOST_USNIC_ETH_IF_START_INDEX
+        
+        for adapter_index in adapter_index_list:
+            expected_usnic_count_list.extend([usnic_count, usnic_count])
+            host_usnic_eth_if_list.append("eth" + str(host_usnic_eth_if_current_index))
+            host_usnic_eth_if_current_index = host_usnic_eth_if_current_index + 1
+            host_usnic_eth_if_list.append("eth" + str(host_usnic_eth_if_current_index))
+            host_usnic_eth_if_current_index = host_usnic_eth_if_current_index + 1
+            self._logger.debug(host_usnic_eth_if_list)
+            self.create_host_eth_if_property(cimc, adapter_index, cimc_eth_properties)
+            
+        cimc.power_cycle()
+        host = Util.wait_for_node_to_boot_up(host_ip)
+        
+        self.check_host_usnic(host, expected_usnic_count_list)
+        
+        for eth_if in host_usnic_eth_if_list:
+            host.set_mtu(eth_if, mtu)
+        host.show_ifconfig()
+        
     
+    def create_host_eth_if_property(self, cimc, adapter_index, cimc_eth_properties):
+        for host_eth_if, properties in cimc_eth_properties.iteritems():
+            cimc.scope_host_eth_if_from_top(adapter_index, host_eth_if)
+            for key, value in properties.iteritems():
+                if key == "usnic":
+                    cimc.create_usnic_at_host_eth_if(value) 
+                    cimc.scope_host_eth_if_from_top(adapter_index, host_eth_if)
+                else:
+                    cimc.set_property(key, value)
+            cimc.commit()
+            cimc.show_detail()
+        
+        
         
     

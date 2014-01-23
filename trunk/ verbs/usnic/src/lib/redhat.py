@@ -71,4 +71,15 @@ class RedHat(Base):
         self.set_ssh(ssh)
         
         
+    def set_mtu(self, eth_if, mtu):
+        self._ssh.send("su -")
+        self._ssh.expect("assword: ")
+        self._ssh.send_expect_prompt(Define.NODE_DEFAULT_PASSWORD)
+        self._ssh.send_expect_prompt("ifconfig " + eth_if + " mtu " + str(mtu))
+        self._ssh.send_expect_prompt("exit")
+        
+    
+    def show_ifconfig(self):
+        self._ssh.send_expect_prompt("ifconfig")
+        
         
