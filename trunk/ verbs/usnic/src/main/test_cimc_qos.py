@@ -13,40 +13,40 @@ from lib.node_compute import NodeCompute
 from main.test_base import TestBase
 
 
-class TestCimcCreate(unittest.TestCase, TestBase):
+class TestCimcQos(unittest.TestCase, TestBase):
 
     @classmethod
     def setUpClass(cls):
         define.PEXPECT_OUTPUT_STDOUT = False
-        TestCimcCreate.__host_ip_1 = DefineMpi.NODE_HOST_IP_1
-        TestCimcCreate.__host_ip_2 = DefineMpi.NODE_HOST_IP_2
-        TestCimcCreate.__cimc_1 = CIMC(DefineMpi.NODE_CIMC_IP_1)  
-        TestCimcCreate.__cimc_2 = CIMC(DefineMpi.NODE_CIMC_IP_2)
+        TestCimcQos.__host_ip_1 = DefineMpi.NODE_HOST_IP_1
+        TestCimcQos.__host_ip_2 = DefineMpi.NODE_HOST_IP_2
+        TestCimcQos.__cimc_1 = CIMC(DefineMpi.NODE_CIMC_IP_1)  
+        TestCimcQos.__cimc_2 = CIMC(DefineMpi.NODE_CIMC_IP_2)
     
-        TestCimcCreate.__cimc_1_adapter_index_list = TestCimcCreate.__cimc_1.get_adapter_index_list_from_top()
-        TestCimcCreate.__cimc_2_adapter_index_list = TestCimcCreate.__cimc_2.get_adapter_index_list_from_top()
+        TestCimcQos.__cimc_1_adapter_index_list = TestCimcQos.__cimc_1.get_adapter_index_list_from_top()
+        TestCimcQos.__cimc_2_adapter_index_list = TestCimcQos.__cimc_2.get_adapter_index_list_from_top()
         
     
     @classmethod
     def tearDownClass(cls):
-        TestCimcCreate.__cimc_1._ssh.exit()
-        TestCimcCreate.__cimc_2._ssh.exit()
+        TestCimcQos.__cimc_1._ssh.exit()
+        TestCimcQos.__cimc_2._ssh.exit()
     
     
     def setUp(self):
         TestBase.init(self)
         #self._logger.debug("\n\n====================== in setUp() ======================")
-        self._host_ip_1 = TestCimcCreate.__host_ip_1
-        self._host_ip_2 = TestCimcCreate.__host_ip_2
+        self._host_ip_1 = TestCimcQos.__host_ip_1
+        self._host_ip_2 = TestCimcQos.__host_ip_2
         
-        self._cimc_1 = TestCimcCreate.__cimc_1
-        self._cimc_2 = TestCimcCreate.__cimc_2
+        self._cimc_1 = TestCimcQos.__cimc_1
+        self._cimc_2 = TestCimcQos.__cimc_2
         
         self._cimc_1.show_cimc_detail()
         self._cimc_2.show_cimc_detail()
         
-        self._cimc_1_adapter_index_list = TestCimcCreate.__cimc_1_adapter_index_list
-        self._cimc_2_adapter_index_list = TestCimcCreate.__cimc_2_adapter_index_list
+        self._cimc_1_adapter_index_list = TestCimcQos.__cimc_1_adapter_index_list
+        self._cimc_2_adapter_index_list = TestCimcQos.__cimc_2_adapter_index_list
         
         self._cimc_1_adapter_count = len(self._cimc_1_adapter_index_list)
         self._cimc_2_adapter_count = len(self._cimc_2_adapter_index_list)
