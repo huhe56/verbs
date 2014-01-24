@@ -12,6 +12,7 @@ from lib.util import Util
 from lib.logger import MyLogger
 from utils.utils import Utils
 from lib.cimc import CIMC
+from lib.node_compute import NodeCompute
 
 
 class TestBase(object):
@@ -185,5 +186,18 @@ class TestBase(object):
             cimc.show_detail()
         
         
+    def prepare_and_run_mpi(self, host_ip, usnic_count):
+        np = self.calculate_max_number_of_process(Define.CIMC_CORE_PER_NODE, usnic_count, DefineMpi.NODE_NUMBER)
+        nvf = np/DefineMpi.NODE_NUMBER
+        expected_vf_used_count_list = [nvf, nvf]
+        if self._cimc_1_adapter_count == 2:
+            expected_vf_used_count_list = [nvf, nvf, nvf, nvf]
+        param_dictionary = {
+                            DefineMpi.MPI_PARAM_CMD: DefineMpi.MPI_CMD_ALLTOALL,
+                            DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
+                            }
+        host = NodeCompute(host_ip)
+        self.run_mpi(host, param_dictionary)
         
     
