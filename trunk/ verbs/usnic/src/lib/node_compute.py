@@ -8,6 +8,8 @@ import re, threading, time
 
 from main.define import Define, DefineMpi
 from lib.redhat import RedHat
+from lib.util import Util
+
 
 class NodeCompute(RedHat):
     '''
@@ -23,6 +25,51 @@ class NodeCompute(RedHat):
         self._current_output = None
         self._vf_used_count_equal_dictionary = {}
 
+
+    @staticmethod
+    def wait_for_node_to_boot_up(node_ip):
+        node = None
+        probe_max_count = 10
+        try_count = 1
+        interval = 60
+        while try_count <= probe_max_count:
+            time.sleep(interval)
+            node = NodeCompute(node_ip)
+            if not node.get_ssh():
+                Util._logger.info("probe times: " + str(try_count))
+                try_count = try_count + 1
+            else:
+                return node
+            
+
+    def start_pingpong_server(self, usnic):
+        self._ssh.send_expect_prompt("ibv_ud_pingpong -g 0 -s 100 -d " + usnic)
+        return Util.check_shell_status(self._ssh)
+    
+
+    def start_pingpong_client(self, usnic, ip_address):
+        self._ssh.send_expect_prompt("ibv_ud_pingpong -g 0 -s 100 -d " + usnic + " " + ip_address)
+        return Util.check_shell_status(self._ssh)
+    
+
+    def usnic_verbs_check(self):
+        self._ssh.send_expect_prompt("usnic_verbs_check")
+        
+        
+    def usnic_status(self):
+        self._ssh.send_expect_prompt("usnic_status")
+        
+
+    def get_usnic_eth_if_ip_list(self):
+        usnic_eth_if_ip_list = []
+        if not self._eth_if_list:
+            usnic_eth_if_list = self._ssh.send_match_list("usnic_status", "(?<=\, )(?:eth\d)")
+            for usnic_eth_if in usnic_eth_if_list:
+                usnic_eth_if_ip_list_tmp = self._ssh.send_match_list("ifconfig " + usnic_eth_if, "(?<=inet addr:)(?:\d{1,3}\.){3}\d{1,3}")
+                if len(usnic_eth_if_ip_list_tmp) == 1:
+                    usnic_eth_if_ip_list.append(usnic_eth_if_ip_list_tmp[0])
+        return usnic_eth_if_ip_list
+    
         
     def get_usnic_configured_count_list(self):
         usnic_count_list = []

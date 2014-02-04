@@ -35,7 +35,7 @@ if __name__ == '__main__':
         node = NodeCompute(node_name, node_usr, node_pwd)
         node_list.append(node)
         if node.get_ssh(): 
-            eth_if_list = node.get_eth_if_list()
+            eth_if_list = node.get_usnic_eth_if_ip_list()
             node.exit_ssh()
             for eth_if in eth_if_list:
                 if eth_if.startswith("127.") or eth_if.startswith("192.168."): continue
@@ -60,7 +60,7 @@ if __name__ == '__main__':
             print "Error: can't ssh to " + node._hostname
         else:
             summary[0] = summary[0] + 1
-            eth_if_list = node.get_eth_if_list()
+            eth_if_list = node.get_usnic_eth_if_ip_list()
             for eth_if in eth_if_list:
                 subnet = str(ipaddr.IPv4Network(eth_if + "/24").network)
                 if subnet in subnet_dict.keys():

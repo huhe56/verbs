@@ -49,7 +49,7 @@ class RedHat(Base):
         if not self._eth_if_list:
             self._eth_if_list = self._ssh.send_match_list("ifconfig", "(?<=inet addr:)(?:\d{1,3}\.){3}\d{1,3}")
         return self._eth_if_list
-        
+    
     
     def get_eth_if_name_list(self):
         if not self._eth_if_list:
