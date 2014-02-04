@@ -243,5 +243,14 @@ class CIMC(FW):
         self._ssh.send_expect_prompt("y")
         
         
+    ''' bios '''
+    def set_bios_advanced(self, name, value):
+        self._ssh.send_expect_prompt("scope bios")
+        self._ssh.send_expect_prompt("scope advanced")
+        self._ssh.send_expect_prompt("set " + name + " " + value)
+        self._ssh.send("commit")
+        self._ssh.expect("\[y\|N\]", Define.TIMEOUT_COMMIT)
+        self._ssh.send_expect_prompt("y")
+        
         
     

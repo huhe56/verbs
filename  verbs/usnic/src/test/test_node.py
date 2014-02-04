@@ -22,10 +22,10 @@ if __name__ == '__main__':
     
     
     
-    compute_node = NodeCompute("bcnode59")
+    compute_node = NodeCompute("bcnode04")
     #compute_node.send_expect_prompt("ls")
     #compute_node.send_expect_prompt("pwd")
-    eth_if_list = compute_node.get_next_no_ip_eth_if_name(2)
+    eth_if_list = compute_node.get_usnic_eth_if_ip_list()
     print eth_if_list
     compute_node._ssh.send("exit")
     
