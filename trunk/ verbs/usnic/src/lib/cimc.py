@@ -253,4 +253,8 @@ class CIMC(FW):
         self._ssh.send_expect_prompt("y")
         
         
+    def show_storage_adapter_detail(self):
+        self.scope_chassis_from_top()
+        self._ssh.send_expect_prompt("show storageadapter detail")
+        
     

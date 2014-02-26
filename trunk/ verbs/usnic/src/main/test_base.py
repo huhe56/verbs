@@ -93,7 +93,7 @@ class TestBase(object):
     def create_usnic_check_host_usnic(self, cimc, host_ip, adapter_index, usnic_count_dictionary, expected_usnic_count_list):
         self.create_usnic(cimc, adapter_index, usnic_count_dictionary)
         cimc.power_cycle()
-        host = Util.wait_for_node_to_boot_up(host_ip)
+        host = NodeCompute.wait_for_node_to_boot_up(host_ip)
         self.check_host_usnic(host, expected_usnic_count_list)
         return host
         
@@ -164,7 +164,7 @@ class TestBase(object):
             self.create_host_eth_if_property(cimc, adapter_index, cimc_eth_properties)
             
         cimc.power_cycle()
-        host = Util.wait_for_node_to_boot_up(host_ip)
+        host = NodeCompute.wait_for_node_to_boot_up(host_ip)
         
         self.check_host_usnic(host, expected_usnic_count_list)
         

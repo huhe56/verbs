@@ -14,6 +14,7 @@ from main.test_base import TestBase
 
 
 class TestMpiRunInclude(unittest.TestCase, TestBase):
+    ''' need 4 usnic interface server '''
 
     @classmethod
     def setUpClass(cls):
@@ -30,19 +31,26 @@ class TestMpiRunInclude(unittest.TestCase, TestBase):
     @classmethod
     def tearDownClass(cls):
         TestMpiRunInclude.__cimc_1._ssh.exit()
+        TestMpiRunInclude.__cimc_2._ssh.exit()
     
     
     def setUp(self):
         TestBase.init(self)
-        self._logger.debug("\n\n====================== require 2 adapter and 4 pf, usnic starts from eth4 ======================\n")
+        
         self._host_ip_1 = TestMpiRunInclude.__host_ip_1
         self._host_ip_2 = TestMpiRunInclude.__host_ip_2
         
         self._cimc_1 = TestMpiRunInclude.__cimc_1
         self._cimc_2 = TestMpiRunInclude.__cimc_2
         
+        self._cimc_1.show_cimc_detail()
+        self._cimc_2.show_cimc_detail()
+        
         self._cimc_1_adapter_index_list = TestMpiRunInclude.__cimc_1_adapter_index_list
         self._cimc_2_adapter_index_list = TestMpiRunInclude.__cimc_2_adapter_index_list
+        
+        self._cimc_1_adapter_count = len(self._cimc_1_adapter_index_list)
+        self._cimc_2_adapter_count = len(self._cimc_2_adapter_index_list)
         
         for adapter_index in self._cimc_1_adapter_index_list:
             self._cimc_1.delete_all_host_eth_if_from_top(adapter_index)
@@ -51,7 +59,7 @@ class TestMpiRunInclude(unittest.TestCase, TestBase):
         
                 
     def tearDown(self):
-        pass
+        self.finish_test()
     
     
     # first test to run to setup environment
