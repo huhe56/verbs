@@ -29,16 +29,20 @@ class TestCimcCreateMpiNegative(unittest.TestCase, TestBase):
     @classmethod
     def tearDownClass(cls):
         TestCimcCreateMpiNegative.__cimc_1._ssh.exit()
+        TestCimcCreateMpiNegative.__cimc_2._ssh.exit()
     
     
     def setUp(self):
         TestBase.init(self)
-        self._logger.debug("\n\n====================== in setUp() ======================\n")
+        
         self._host_ip_1 = TestCimcCreateMpiNegative.__host_ip_1
         self._host_ip_2 = TestCimcCreateMpiNegative.__host_ip_2
         
         self._cimc_1 = TestCimcCreateMpiNegative.__cimc_1
         self._cimc_2 = TestCimcCreateMpiNegative.__cimc_2
+        
+        self._cimc_1.show_cimc_detail()
+        self._cimc_2.show_cimc_detail()
         
         self._cimc_1_adapter_index_list = TestCimcCreateMpiNegative.__cimc_1_adapter_index_list
         self._cimc_2_adapter_index_list = TestCimcCreateMpiNegative.__cimc_2_adapter_index_list
@@ -51,9 +55,8 @@ class TestCimcCreateMpiNegative(unittest.TestCase, TestBase):
         for adapter_index in self._cimc_2_adapter_index_list:
             self._cimc_2.delete_all_host_eth_if_from_top(adapter_index)
         
-        
     def tearDown(self):
-        pass
+        self.finish_test()
     
     
     def test_create_1pf_16usnic_run_mpi_negative(self):
@@ -141,7 +144,7 @@ class TestCimcCreateMpiNegative(unittest.TestCase, TestBase):
         if self._cimc_1_adapter_count == 2:
             expected_vf_used_count_list = [nvf, nvf, nvf, nvf]
         param_dictionary = {
-                            DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_NP: np+2,
                             DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST: expected_vf_used_count_list
                             }
         host_1 = NodeCompute(self._host_ip_1)

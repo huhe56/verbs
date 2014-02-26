@@ -79,7 +79,7 @@ class TestCimcReboot(unittest.TestCase, TestBase):
         
         for i in range(5):
             cimc.power_cycle()
-            Util.wait_for_node_to_boot_up(host_ip)
+            NodeCompute.wait_for_node_to_boot_up(host_ip)
             time.sleep(30)
         
         self.prepare_and_run_mpi(host_ip, usnic_count)

@@ -31,23 +31,26 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
     @classmethod
     def tearDownClass(cls):
         TestCimcCreateMpi.__cimc_1._ssh.exit()
+        TestCimcCreateMpi.__cimc_2._ssh.exit()
     
     
     def setUp(self):
         TestBase.init(self)
-        #self._logger.debug("\n\n====================== in setUp() ======================\n")
+        
         self._host_ip_1 = TestCimcCreateMpi.__host_ip_1
         self._host_ip_2 = TestCimcCreateMpi.__host_ip_2
         
         self._cimc_1 = TestCimcCreateMpi.__cimc_1
         self._cimc_2 = TestCimcCreateMpi.__cimc_2
         
+        self._cimc_1.show_cimc_detail()
+        self._cimc_2.show_cimc_detail()
+        
         self._cimc_1_adapter_index_list = TestCimcCreateMpi.__cimc_1_adapter_index_list
         self._cimc_2_adapter_index_list = TestCimcCreateMpi.__cimc_2_adapter_index_list
         
         self._cimc_1_adapter_count = len(self._cimc_1_adapter_index_list)
         self._cimc_2_adapter_count = len(self._cimc_2_adapter_index_list)
-        
         
         for adapter_index in self._cimc_1_adapter_index_list:
             self._cimc_1.delete_all_host_eth_if_from_top(adapter_index)
@@ -56,7 +59,7 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         
         
     def tearDown(self):
-        pass
+        self.finish_test()
     
     
     def test_create_1pf_16usnic_run_mpi(self):
@@ -326,11 +329,11 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         self._logger.info("test run after removing usnic from eth2")
         self._cimc_1.delete_usnic_from_top(adapter_index, "eth2")
         self._cimc_1.power_cycle()
-        Util.wait_for_node_to_boot_up(self._host_ip_1)
+        NodeCompute.wait_for_node_to_boot_up(self._host_ip_1)
         
         self._cimc_2.delete_usnic_from_top(adapter_index, "eth2")
         self._cimc_2.power_cycle()
-        Util.wait_for_node_to_boot_up(self._host_ip_2)
+        NodeCompute.wait_for_node_to_boot_up(self._host_ip_2)
         
         param_dictionary = {
                             DefineMpi.MPI_PARAM_NP: np,
@@ -344,11 +347,11 @@ class TestCimcCreateMpi(unittest.TestCase, TestBase):
         self._logger.info("test mpi run after remove eth3")
         self._cimc_1.delete_host_eth_if_from_top(adapter_index, "eth3")
         self._cimc_1.power_cycle()
-        Util.wait_for_node_to_boot_up(self._host_ip_1)
+        NodeCompute.wait_for_node_to_boot_up(self._host_ip_1)
         
         self._cimc_2.delete_host_eth_if_from_top(adapter_index, "eth3")
         self._cimc_2.power_cycle()
-        Util.wait_for_node_to_boot_up(self._host_ip_2)
+        NodeCompute.wait_for_node_to_boot_up(self._host_ip_2)
         
         param_dictionary = {
                             DefineMpi.MPI_PARAM_NP: np,
