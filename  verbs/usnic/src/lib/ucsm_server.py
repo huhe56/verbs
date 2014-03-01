@@ -5,13 +5,13 @@ Created on Aug 13, 2013
 '''
 
 import pexpect
-from main.define import Define
+from main_ucsm.define import Define
 from lib.logger import MyLogger
-from lib.fw import FW
 from lib.ucsm import UCSM
+from lib.ucsm_server_vnic import UcsmServerVnic
 
 
-class UcsmServer(FW):
+class UcsmServer():
     '''
     classdocs
     '''
@@ -23,11 +23,14 @@ class UcsmServer(FW):
         '''
         self._logger = MyLogger.getLogger(self.__class__.__name__)
         self._ucsm = ucsm
+        self._server_type = Define.SERVER_TYPE_BLADE
         self._chassis_index = chassis_index
+        if not chassis_index: self._server_type = Define.SERVER_TYPE_RACK
         self._server_index = server_index
-        FW.__init__(self, ucsm.get_ssh())
+        self._ssh = ucsm.get_ssh()
         
         self._service_profile = None
+        self._vnic_dict = None
         
         
     @staticmethod
@@ -44,6 +47,43 @@ class UcsmServer(FW):
             rack_server.set_service_profile(service_profile)
             ucsm_server_list.append(rack_server)
         return ucsm_server_list
+    
+    
+    def configure(self, node_data, vnic_default_data):
+        vnics_data = node_data["vnics"]
+        for vnic_data in vnics_data:
+            vlan = vnic_data['vlan']
+            name = "eth-" + str(vlan)
+            ucsm_server_vnic = UcsmServerVnic(self, name)
+            ucsm_server_vnic.configure(vnic_data, vnic_default_data)
+            self._vnic_dict[name] = ucsm_server_vnic
+        self.commit()
+        self.reboot_from_top()
+    
+    
+    def get_mac_address(self, vlan):
+        if self._server_type == Define.SERVER_TYPE_BLADE:
+            item_chassis = "C" + str(self._chassis_index)
+            item_blade   = "B" + str(self._server_index)
+            return ":".join([Define.MAC_PREFIX, item_chassis, item_blade, str(vlan)])
+        else:
+            item_chassis = "CC"
+            item_rack    = "%02d" % self._server_index
+            return ":".join([Define.MAC_PREFIX, item_chassis, item_rack, str(vlan)])
+    
+    
+    def get_all_vnics_attributes(self):
+        self._vnic_dict = UcsmServerVnic.get_all_attributes(self)
+        for vnic_name, vnic in self._vnic_dict.items():
+            vnic.debug()
+    
+    
+    def delete_all_vnics(self):
+        for vnic_name, vnic in self._vnic_dict.items():
+            if vnic_name != "eth-1":
+                vnic.delete()
+                del self._vnic_dict[vnic_name]
+                
     
     
     def scope_server_from_top(self):
@@ -79,6 +119,10 @@ class UcsmServer(FW):
         self._ssh.send_expect_prompt("show")
         
         
+    def commit(self):
+        self._ssh.send_expect_prompt("commit-buffer")
+        
+        
     '''
     fabric string can be: a, a-b, b, b-a
     '''
@@ -87,15 +131,22 @@ class UcsmServer(FW):
         self.commit()
         
         
-    def power_on(self):
+    def power_on_from_top(self):
+        self.scope_service_profile_from_top()
         self._ssh.send_expect_prompt("power up")
         self.commit()
         
         
-    def power_off(self):
+    def power_off_from_top(self):
+        self.scope_service_profile_from_top()
         self._ssh.send_expect_prompt("power down")
         self.commit()
         
+        
+    def reboot_from_top(self):
+        self.scope_service_profile_from_top()
+        self._ssh.send_expect_prompt("reboot")
+        self.commit()
         
     
     def set_bios_policy(self, bios_policy_name):

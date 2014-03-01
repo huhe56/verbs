@@ -234,4 +234,16 @@ class Util(object):
     
     
         
+    @staticmethod
+    def populate_node_list(node_count, node_list):
+        if node_count == len(node_list):
+            return node_list
+        elif len(node_list) == 1:
+            node = node_list[0]
+            for i in range(node_count-1):
+                node_list.append(node)
+            return node_list
+        else:
+            Util._logger.error("len of node_list != 1, please update test case json file.")
+            return None
     

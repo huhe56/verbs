@@ -1,0 +1,71 @@
+[
+	{
+		"name": "1 usNIC on 1 PF",
+		"node count": 2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	1
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan":		10,
+						"usnic":	1
+					}
+				]
+			}
+		]
+	},
+	
+	{
+		"name": "16 usNIC on 1 PF",
+		"node count": 2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	16
+					}
+				]
+			}
+		]
+	},
+	
+	{
+		"name": "2 PF 16 usNIC each in node 1, 2 PF 32 usNIC in node 2",
+		"node count": 2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	16
+					},
+					{
+						"vlan": 	20,
+						"usnic":	16
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	32
+					},
+					{
+						"vlan": 	20,
+						"usnic":	32
+					}
+				]
+			}
+		]
+	}
+	
+]
