@@ -1,0 +1,13 @@
+{
+	
+	"vlan": 	"required",
+	"name": 	"default",
+	"fabric": 	"default",
+	"mtu": 		9000,
+	"mac": 		"default",
+	
+	"adapter policy": 	"USNIC",
+	"qos policy": 		"Platinum-9216",
+	
+	"usnic":			16
+}

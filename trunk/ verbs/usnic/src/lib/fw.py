@@ -25,8 +25,7 @@ class FW(Base):
     
 
     def commit(self):
-        if define.CIMC_COMMIT_IMMEDIATELY:
-            self._ssh.send_expect_prompt("commit", Define.TIMEOUT_COMMIT)
+        self._ssh.send_expect_prompt("commit", Define.TIMEOUT_COMMIT)
         
         
     def scope_top(self):
