@@ -6,7 +6,8 @@ Created on Aug 8, 2013
 import time
 
 from main import define
-from main.define import Define, DefineMpi
+from main_ucsm.define import Define
+from main_ucsm.define_mpi import DefineMpi
 from lib.util import Util
 from lib.node_compute import NodeCompute
 from lib.node_head import NodeHead
@@ -20,14 +21,18 @@ if __name__ == '__main__':
     #file_json_step = Define.PATH_USNIC_JSON_LINUX + "wget_ucsm_firmware.json"   
     #Util.run_step_list(head_node.get_ssh(), file_json_step)
     
+    host = NodeCompute("node03")
+    host.get_usnic_status_data()
     
+    host.get_ifconfig_data()
     
-    compute_node = NodeCompute("bcnode04")
+    #compute_node = NodeCompute.wait_for_node_to_boot_up("192.168.42.2")
+    
     #compute_node.send_expect_prompt("ls")
     #compute_node.send_expect_prompt("pwd")
-    eth_if_list = compute_node.get_usnic_eth_if_ip_list()
-    print eth_if_list
-    compute_node._ssh.send("exit")
+    #eth_if_list = compute_node.get_usnic_eth_if_ip_list()
+    #print eth_if_list
+    #compute_node._ssh.send("exit")
     
     '''
     node = None

@@ -9,7 +9,7 @@ from lib.ssh import SSH
 
 
 if __name__ == '__main__':
-    ssh = SSH("10.193.212.1", "huhe", "nbv12345")
+    ssh = SSH("10.193.212.1", "huhe", "Nbv12345")
     if ssh.is_login_ok():
         status = Util.ping(ssh, "10.193.212.1", 2)
         if status:

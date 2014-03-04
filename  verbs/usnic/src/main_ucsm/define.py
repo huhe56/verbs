@@ -58,7 +58,7 @@ class Define(object):
     
     UCSM_BLADE_SERVER_LIST  = { 1: {
                                     #1: "Blade1_node01", 
-                                    2: "Blade2_node02",
+                                    2: {"service profile": "Blade2_node02", "host name": "node02"},
                                     #3: "Blade3_node03",
                                     #4: "Blade4_node04", 
                                     #5: "Blade5_node05", 
@@ -71,7 +71,7 @@ class Define(object):
                                #3: "Rack-03_node09", 
                                #4: "Rack-04_node10",
                                #5: "Rack-05_node11",
-                               6: "Rack-06_node12",
+                               6: {"service profile": "Rack-06_node12", "host name": "node12"},
                                }
     
     
