@@ -30,6 +30,7 @@ class UcsmServer():
         self._ssh = ucsm.get_ssh()
         
         self._service_profile = None
+        self._host_name = None
         self._vnic_dict = None
         
         
@@ -38,13 +39,19 @@ class UcsmServer():
         ucsm_server_list = []
         ucsm = UCSM(ucsm_hostname)
         for chassis_index in Define.UCSM_BLADE_SERVER_LIST:
-            for server_index, service_profile in Define.UCSM_BLADE_SERVER_LIST[chassis_index].items():
+            for server_index, node in Define.UCSM_BLADE_SERVER_LIST[chassis_index].items():
+                service_profile = node["service profile"]
+                host_name = node["host name"]
                 blade_server = UcsmServer(ucsm, chassis_index, server_index)
                 blade_server.set_service_profile(service_profile)
+                blade_server.set_host_name(host_name)
                 ucsm_server_list.append(blade_server)
-        for server_index, service_profile in Define.UCSM_RACK_SERVER_LIST.items():
+        for server_index, node in Define.UCSM_RACK_SERVER_LIST.items():
+            service_profile = node["service profile"]
+            host_name = node["host name"]
             rack_server = UcsmServer(ucsm, None, server_index)
             rack_server.set_service_profile(service_profile)
+            rack_server.set_host_name(host_name)
             ucsm_server_list.append(rack_server)
         return ucsm_server_list
     
@@ -59,6 +66,10 @@ class UcsmServer():
             self._vnic_dict[name] = ucsm_server_vnic
         self.commit()
         self.reboot_from_top()
+    
+    
+    def get_vnic_list(self):
+        return self._vnic_dict
     
     
     def get_mac_address(self, vlan):
@@ -101,6 +112,10 @@ class UcsmServer():
         
     def set_service_profile(self, service_profile):
         self._service_profile = service_profile
+        
+        
+    def set_host_name(self, host_name):
+        self._host_name = host_name
         
         
     def scope_service_profile_from_top(self):

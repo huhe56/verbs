@@ -6,7 +6,8 @@ Created on Aug 14, 2013
 
 import re, threading, time
 
-from main.define import Define, DefineMpi
+from main_ucsm.define import Define
+from main_ucsm.define_mpi import DefineMpi
 from lib.redhat import RedHat
 from lib.util import Util
 
@@ -24,7 +25,9 @@ class NodeCompute(RedHat):
         RedHat.__init__(self, hostname, username, password)        
         self._current_output = None
         self._vf_used_count_equal_dictionary = {}
-
+        self._ucsm_server_vnic_list = None
+        self._usnic_status_dict = {}
+        self._usnic_eth_list = {}
 
     @staticmethod
     def wait_for_node_to_boot_up(node_ip):
@@ -33,14 +36,78 @@ class NodeCompute(RedHat):
         try_count = 1
         interval = 60
         while try_count <= probe_max_count:
-            time.sleep(interval)
-            node = NodeCompute(node_ip)
-            if not node.get_ssh():
-                Util._logger.info("probe times: " + str(try_count))
+            try:
+                node = NodeCompute(node_ip)
+                if not node.get_ssh():
+                    Util._logger.info("probe times: " + str(try_count))
+                    try_count = try_count + 1
+                    time.sleep(interval)
+                else:
+                    return node
+            except:
+                Util._logger.info("exception is raised in ssh")
                 try_count = try_count + 1
-            else:
-                return node
+                time.sleep(interval)
+        raise Exception("Failed to ssh to " + node_ip + " for " + probe_max_count + " times")
             
+
+    def set_ucsm_server_vnic_list(self, vnic_list):
+        self._ucsm_server_vnic_list = vnic_list
+
+
+    def get_ucsm_server_vnic_list(self):
+        return self._ucsm_server_vnic_list
+
+
+    def get_usnic_status_data(self):
+        self._ssh.send_expect_prompt("/opt/cisco/usnic/bin/usnic_status")
+        output = self._ssh.get_output()
+        line_list = output.split("\r\n")
+        usnic_index = None
+        for line in line_list:
+            if line.startswith("usnic_"):
+                usnic_index, eth_index, mac_address, vf_configured_count = line.split(", ")
+                usnic_index, tmp = usnic_index.split(": ")
+                vf_configured_count, tmp = vf_configured_count.split(" ")
+                #self._logger.debug("usnic index: " + usnic_index)
+                #self._logger.debug("eth: " + eth_index)
+                #self._logger.debug("mac address: " + mac_address)
+                #self._logger.debug("vf configured count: " + vf_configured_count)
+                self._usnic_status_dict[usnic_index] = {"eth": eth_index, "mac": mac_address, "vf configured count": str(vf_configured_count)} 
+            else:
+                p = re.compile("(?P<VFs>\d+)\sVFs\,\s\d+\sQPs\,\s\d\sCQs")
+                m = p.search(line)
+                if m:
+                    vfs = m.groups("VFs")[0]
+                    #self._logger.debug("vf used count: " + vfs)
+                    self._usnic_status_dict[usnic_index]["vf used count"] = vfs
+        self._logger.debug(self._usnic_status_dict)
+
+
+    def get_ifconfig_data(self):
+        self._ssh.send_expect_prompt("ifconfig")
+        output = self._ssh.get_output()
+        line_list = output.split("\r\n")
+        p_eth = re.compile("(?P<eth>^eth[0-9\.]+)")
+        p_ip  = re.compile("(?<=inet addr:)((?:\d{1,3}\.){3}\d{1,3})")
+        p_mtu = re.compile("(?<=MTU:)(\d+)")
+        eth_index = None
+        for line in line_list:
+            m = p_eth.search(line)
+            if m:
+                eth_index = m.groups("eth")[0]
+                self._usnic_eth_list[eth_index] = {}
+            elif eth_index:
+                m = p_ip.search(line)
+                if m:
+                    ip = m.groups("ip")[0]
+                    self._usnic_eth_list[eth_index]["ip"] = ip
+                m = p_mtu.search(line)
+                if m:
+                    mtu = m.groups("mtu")[0]
+                    self._usnic_eth_list[eth_index]["mtu"] = mtu
+        print self._usnic_eth_list
+        
 
     def start_pingpong_server(self, usnic):
         self._ssh.send_expect_prompt("ibv_ud_pingpong -g 0 -s 100 -d " + usnic)
@@ -65,7 +132,7 @@ class NodeCompute(RedHat):
         if not self._eth_if_list:
             usnic_eth_if_list = self._ssh.send_match_list("usnic_status", "(?<=\, )(?:eth\d)")
             for usnic_eth_if in usnic_eth_if_list:
-                usnic_eth_if_ip_list_tmp = self._ssh.send_match_list("ifconfig " + usnic_eth_if, "(?<=inet addr:)(?:\d{1,3}\.){3}\d{1,3}")
+                usnic_eth_if_ip_list_tmp = self._ssh.send_match_list("ifconfig " + usnic_eth_if, "(?<=inet addr:)((?:\d{1,3}\.){3}\d{1,3})")
                 if len(usnic_eth_if_ip_list_tmp) == 1:
                     usnic_eth_if_ip_list.append(usnic_eth_if_ip_list_tmp[0])
         return usnic_eth_if_ip_list

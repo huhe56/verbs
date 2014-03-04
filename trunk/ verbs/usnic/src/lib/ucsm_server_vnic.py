@@ -135,8 +135,21 @@ class UcsmServerVnic(object):
         self._ucsm_server._ssh.send_expect_prompt("exit")
         
         
-    def create_usnic(self):
+    def create_usnic(self, expect_message=None):
         self._ucsm_server._ssh.send_expect_prompt("create usnic-conn-policy-ref " + self._usnic_policy)
+        self._ucsm_server.commit()
+        self._ucsm_server._ssh.send_expect_prompt("show detail")
+        output = self._ucsm_server._ssh.get_output()
+        sub_str = "usNIC Connection Policy Name: " + self._usnic_policy
+        if not expect_message: 
+            if sub_str in output:
+                self._logger.info("Passed: " + self._usnic_policy + " has been created")
+            else:
+                self._logger.info("Failed: " + self._usnic_policy + " has not been created")
+                raise Exception("Failed to create usnic " + self._usnic_policy)
+        else:
+            pass
+            ''' TBD for negative test case '''
         self._ucsm_server._ssh.send_expect_prompt("exit")
         
         
