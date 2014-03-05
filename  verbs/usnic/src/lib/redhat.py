@@ -28,6 +28,10 @@ class RedHat(Base):
         self._eth_if_list = None
         
         
+    def get_host_name(self):
+        return self._hostname
+        
+        
     def get_next_no_ip_eth_if_name_list(self, count):
         eth_if_name_list = self.get_eth_if_name_list()
         i = len(eth_if_name_list)

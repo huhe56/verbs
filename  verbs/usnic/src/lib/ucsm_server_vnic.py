@@ -4,6 +4,7 @@ Created on Feb 27, 2014
 @author: huhe
 '''
 
+from main_ucsm.define import Define
 from lib.logger import MyLogger
 
 
@@ -109,13 +110,14 @@ class UcsmServerVnic(object):
             self._usnic = vnic_default_data["usnic"]
         self._usnic_policy = str(self._usnic) + "_usNIC"
             
-        self.create_vnic_from_top()
-        self.set_default_net()
-        self.set_mac_address()
-        self.set_mtu()
-        self.set_adapter_policy()
-        self.set_qos_policy()
-        self.create_usnic()
+        if Define.CONFIG:
+            self.create_vnic_from_top()
+            self.set_default_net()
+            self.set_mac_address()
+            self.set_mtu()
+            self.set_adapter_policy()
+            self.set_qos_policy()
+            self.create_usnic()
         
     
     def create_vnic_from_top(self):
@@ -168,6 +170,18 @@ class UcsmServerVnic(object):
     def set_qos_policy(self):
         self._ucsm_server._ssh.send_expect_prompt("set qos-policy " + self._qos_policy)
         
+        
+    def get_usnic_count(self):
+        return self._usnic
+    
+    
+    def get_mac_address(self):
+        return self._mac
+    
+    
+    def get_vlan(self):
+        return self._vlan
+    
     
     def debug(self):
         self._logger.debug("vnic name: " + self._name)

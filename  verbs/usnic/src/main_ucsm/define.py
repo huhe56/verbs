@@ -11,6 +11,8 @@ class Define(object):
     classdocs
     '''
     
+    CONFIG = False
+    
     UCSM_BUNDLE_LATEST_BUILD_NUMBER     = 333
     UCSM_BUNDLE_LATEST_BUILD_REVISION   = "131023-180144-rev148217-333"
     

@@ -19,6 +19,7 @@ class DefineMpi:
     MPI_PARAM_MSG                   = "message"
     MPI_PARAM_VF_USED_COUNT_LIST    = "vf_used_count_list"
     MPI_PARAM_TIMEOUT               = "timeout"
+    MPI_PARAM_HOST_LIST             = "host_list"
     
     MPI_PARAM_HOST      = "--host"
     
