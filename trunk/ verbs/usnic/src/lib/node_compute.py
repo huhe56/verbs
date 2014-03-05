@@ -24,10 +24,13 @@ class NodeCompute(RedHat):
         '''
         RedHat.__init__(self, hostname, username, password)        
         self._current_output = None
-        self._vf_used_count_equal_dictionary = {}
-        self._ucsm_server_vnic_list = None
+        self._vf_used_count_equal_dict = {}
+        self._ucsm_server_vnic_dict = None
         self._usnic_status_dict = {}
         self._usnic_eth_list = {}
+        self._total_cpu_core_count = None
+        self._np = None
+        
 
     @staticmethod
     def wait_for_node_to_boot_up(node_ip):
@@ -51,12 +54,28 @@ class NodeCompute(RedHat):
         raise Exception("Failed to ssh to " + node_ip + " for " + probe_max_count + " times")
             
 
-    def set_ucsm_server_vnic_list(self, vnic_list):
-        self._ucsm_server_vnic_list = vnic_list
+    def set_np(self, np):
+        self._np = np
+        
+        
+    def get_np(self):
+        return self._np
+    
+
+    def set_total_cpu_core_count(self, count):
+        self._total_cpu_core_count = count
+        
+    
+    def get_total_cpu_core_count(self):
+        return self._total_cpu_core_count
+    
+        
+    def set_ucsm_server_vnic_dict(self, vnic_dict):
+        self._ucsm_server_vnic_dict = vnic_dict
 
 
-    def get_ucsm_server_vnic_list(self):
-        return self._ucsm_server_vnic_list
+    def get_ucsm_server_vnic_dict(self):
+        return self._ucsm_server_vnic_dict
 
 
     def get_usnic_status_data(self):
@@ -69,18 +88,13 @@ class NodeCompute(RedHat):
                 usnic_index, eth_index, mac_address, vf_configured_count = line.split(", ")
                 usnic_index, tmp = usnic_index.split(": ")
                 vf_configured_count, tmp = vf_configured_count.split(" ")
-                #self._logger.debug("usnic index: " + usnic_index)
-                #self._logger.debug("eth: " + eth_index)
-                #self._logger.debug("mac address: " + mac_address)
-                #self._logger.debug("vf configured count: " + vf_configured_count)
-                self._usnic_status_dict[usnic_index] = {"eth": eth_index, "mac": mac_address, "vf configured count": str(vf_configured_count)} 
+                self._usnic_status_dict[usnic_index] = {"eth": eth_index, "mac": mac_address.upper(), "vf configured count": int(vf_configured_count)} 
             else:
                 p = re.compile("(?P<VFs>\d+)\sVFs\,\s\d+\sQPs\,\s\d\sCQs")
                 m = p.search(line)
                 if m:
                     vfs = m.groups("VFs")[0]
-                    #self._logger.debug("vf used count: " + vfs)
-                    self._usnic_status_dict[usnic_index]["vf used count"] = vfs
+                    self._usnic_status_dict[usnic_index]["vf used count"] = int(vfs)
         self._logger.debug(self._usnic_status_dict)
 
 
@@ -106,7 +120,34 @@ class NodeCompute(RedHat):
                 if m:
                     mtu = m.groups("mtu")[0]
                     self._usnic_eth_list[eth_index]["mtu"] = mtu
-        print self._usnic_eth_list
+        self._logger.debug(self._usnic_eth_list)
+        
+        
+    def check_usnic_configured_vf(self):
+        for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
+            if vnic_data.get_usnic_count():
+                match = False
+                vnic_mac = vnic_data.get_mac_address()
+                vnic_usnic_count = vnic_data.get_usnic_count()
+                vnic_str = None
+                eth_str = None
+                for usnic_index, usnic_status_data in self._usnic_status_dict.items():
+                    usnic_mac = usnic_status_data["mac"]
+                    usnic_vf_configured_count = usnic_status_data["vf configured count"]
+                    vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "] and usnic count [" + str(vnic_usnic_count) +"]"
+                    eth_str  = "eth "  + usnic_index + " mac [" + usnic_mac + "] and usnic count [" + str(usnic_vf_configured_count) + "]"                        
+                    if vnic_mac == usnic_mac and vnic_usnic_count == usnic_vf_configured_count:
+                        self._logger.info("Passed: vnic and eth mac and usnic count are the same")
+                        self._logger.info("Passed: " + vnic_str)
+                        self._logger.info("Passed: " + eth_str)
+                        match = True
+                        break
+                if not match:
+                    self._logger.error("Failed: vnic and eth mac and usnic count are not the same")
+                    self._logger.error("Failed: " + vnic_str)
+                    self._logger.error("Failed: " + eth_str)
+                    raise Exception("Failed to match vnic and eth mac and usnic count")
+                    
         
 
     def start_pingpong_server(self, usnic):
@@ -157,32 +198,49 @@ class NodeCompute(RedHat):
         return usnic_count_list
     
     
-    def check_used_vf_count(self, host_ip_list, expected_vf_used_count_list):
-        for host_ip in host_ip_list:
-            self._logger.info("host: " + host_ip)
-            host = NodeCompute(host_ip)
-            actual_vf_used_count_list = host.get_usnic_used_count_list()
-            self._logger.info("expected vf used count list: ")
-            self._logger.info(expected_vf_used_count_list)
-            self._logger.info("actual vf used count list: ")
-            self._logger.info(actual_vf_used_count_list)
-            
-            vf_used_count_equal = True
-            for configured_count, expected_count in zip(actual_vf_used_count_list, expected_vf_used_count_list):
-                if expected_count >= 0:
-                    if configured_count != expected_count:
-                        vf_used_count_equal = False
-                        break
+    def check_usnic_used_vf(self):
+        self.get_usnic_status_data()
+        for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
+            if vnic_data.get_usnic_count():
+                match = False
+                vnic_mac = vnic_data.get_mac_address()
+                vnic_usnic_count = vnic_data.get_usnic_count()
+                vnic_str = None
+                eth_str = None
+                for usnic_index, usnic_status_data in self._usnic_status_dict.items():
+                    usnic_mac = usnic_status_data["mac"]
+                    usnic_vf_configured_count = usnic_status_data["vf configured count"]
+                    usnic_vf_used_count = usnic_status_data["vf used count"]
                     
-            if vf_used_count_equal:
+                    vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "], usnic configured count [" + str(vnic_usnic_count) +"], expected used count [" + self._np + "]"
+                    eth_str  = "eth "  + usnic_index + " mac [" + usnic_mac + "], usnic configured count [" + str(usnic_vf_configured_count) + "], actual used count [" + usnic_vf_used_count + "]"     
+                                       
+                    if vnic_mac == usnic_mac and vnic_usnic_count == usnic_vf_configured_count and self._np == usnic_vf_used_count:
+                        self._logger.info("Passed: vnic and eth's mac and usnic count are the same")
+                        self._logger.info("Passed: " + vnic_str)
+                        self._logger.info("Passed: " + eth_str)
+                        match = True
+                        break
+                if not match:
+                    self._logger.error("Failed: vnic and eth's mac and usnic count are not the same")
+                    self._logger.error("Failed: " + vnic_str)
+                    self._logger.error("Failed: " + eth_str)
+                    return False
+        return True
+        
+    
+    def check_all_hosts_used_vf(self, host_list):
+        for host in host_list:
+            self._logger.info("host: " + host.get_host_name())
+            ret = host.check_usnic_used_vf()        
+            if ret:
                 self._logger.info("vf used counts equal")
-                self._vf_used_count_equal_dictionary[host_ip] = True
+                self._vf_used_count_equal_dict[host.get_host_name()] = True
             else:
                 self._logger.error("vf used counts not equal")
-                self._vf_used_count_equal_dictionary[host_ip] = False
+                self._vf_used_count_equal_dict[host.get_host_name()] = False
                         
             host.exit()
-            
             
     
     def run_mpi(self, param_dictionary):
@@ -191,14 +249,12 @@ class NodeCompute(RedHat):
         np  = DefineMpi.MPI_NP_DEFAULT
         mca = DefineMpi.MPI_MCA_DEFAULT 
         msg = DefineMpi.MPI_MESSAGE_DEFAULT
-        host_ip_list = DefineMpi.NODE_HOST_LIST_DEFAULT
         
-        vf_used_count_list = None
-        check_used_vf_count_flag = False
+        host_list = None
         
         key_list = param_dictionary.keys()
-        if DefineMpi.MPI_PARAM_HOST in key_list:
-            host_ip_list = param_dictionary[DefineMpi.MPI_PARAM_HOST]
+        if DefineMpi.MPI_PARAM_HOST_LIST in key_list:
+            host_list = param_dictionary[DefineMpi.MPI_PARAM_HOST_LIST]
         if DefineMpi.MPI_PARAM_NP in key_list:
             np = param_dictionary[DefineMpi.MPI_PARAM_NP]
         if DefineMpi.MPI_PARAM_MCA in key_list:
@@ -207,11 +263,9 @@ class NodeCompute(RedHat):
             cmd = param_dictionary[DefineMpi.MPI_PARAM_CMD]
         if DefineMpi.MPI_PARAM_MSG in key_list:
             msg = param_dictionary[DefineMpi.MPI_PARAM_MSG]
-        if DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST in key_list:
-            vf_used_count_list = param_dictionary[DefineMpi.MPI_PARAM_VF_USED_COUNT_LIST]
-            check_used_vf_count_flag = True
         
-        host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_ip_list)])
+        host_name_list = [host.get_host_name() for host in host_list]
+        host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_name_list)])
         np_str   = " ".join([DefineMpi.MPI_PARAM_NP, str(np)])
         mca_str  = " ".join([DefineMpi.MPI_PARAM_MCA, mca])
         cmd_str  = " ".join(["mpirun", host_str, np_str, mca_str, DefineMpi.MPI_PATH, cmd])
@@ -226,9 +280,9 @@ class NodeCompute(RedHat):
         self._logger.debug("timeout: " + str(timeout))
         self._ssh.send(cmd_str)
         
-        if check_used_vf_count_flag and cmd != DefineMpi.MPI_CMD_PINGPONG:
+        if cmd != DefineMpi.MPI_CMD_PINGPONG:
             time.sleep(10)
-            find_used_vf_count_thread = threading.Thread(target=self.check_used_vf_count, args=(host_ip_list, vf_used_count_list))
+            find_used_vf_count_thread = threading.Thread(target=self.check_all_hosts_used_vf, args=(host_list))
             find_used_vf_count_thread.daemon = True
             find_used_vf_count_thread.start()
         
@@ -239,9 +293,9 @@ class NodeCompute(RedHat):
         if re.search(msg, self._current_output, re.IGNORECASE):
             self._logger.info("found message: " + msg)
             if msg in DefineMpi.SHELL_STATUS_0_MESSAGE_LIST:
-                if check_used_vf_count_flag:
-                    for host_ip, result in self._vf_used_count_equal_dictionary.iteritems():
-                        self._logger.info(host_ip)
+                if cmd != DefineMpi.MPI_CMD_PINGPONG:
+                    for host_name, result in self._vf_used_count_equal_dict.iteritems():
+                        self._logger.info(host_name)
                         self._logger.info(result)
                         if not result:
                             return False
@@ -259,6 +313,7 @@ class NodeCompute(RedHat):
             if self.mpi_run_not_enough_usnic():
                 self._logger.error("found not enough usnic message")
             return False
+        
     
     
     def mpi_run_has_error(self):

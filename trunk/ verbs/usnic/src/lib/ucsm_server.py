@@ -32,7 +32,7 @@ class UcsmServer():
         self._service_profile = None
         self._host_name = None
         self._vnic_dict = None
-        
+        self._total_cpu_core_count = None
         
     @staticmethod
     def init_ucsm_server(ucsm_hostname):
@@ -64,11 +64,21 @@ class UcsmServer():
             ucsm_server_vnic = UcsmServerVnic(self, name)
             ucsm_server_vnic.configure(vnic_data, vnic_default_data)
             self._vnic_dict[name] = ucsm_server_vnic
-        self.commit()
-        self.reboot_from_top()
+        if Define.CONFIG:
+            self.commit()
+            self.reboot_from_top()
     
     
-    def get_vnic_list(self):
+    def get_total_cpu_core_count(self):
+        if not self._total_cpu_core_count:
+            self.scope_server_from_top()
+            cpu_core_count_list = self._ssh.send_match_list("show cpu", "(?<=CPU\d)(?:\s+\d+)")
+            cpu_core_count_list = [int(x) for x in cpu_core_count_list]
+            self._total_cpu_core_count = sum(cpu_core_count_list)
+        return self._total_cpu_core_count
+    
+    
+    def get_vnic_dict(self):
         return self._vnic_dict
     
     
@@ -90,17 +100,30 @@ class UcsmServer():
     
     
     def delete_all_vnics(self):
-        for vnic_name, vnic in self._vnic_dict.items():
-            if vnic_name != "eth-1":
-                vnic.delete()
-                del self._vnic_dict[vnic_name]
+        if Define.CONFIG:
+            for vnic_name, vnic in self._vnic_dict.items():
+                if vnic_name != "eth-1":
+                    vnic.delete()
+                    del self._vnic_dict[vnic_name]
                 
     
     
+    def scope_top(self):
+        self._ssh.send_expect_prompt("top")
+        
+    
+    def scope_chassis(self, chassis_index=None):
+        if chassis_index:
+            self._ssh.send_expect_prompt("scope chassis " + str(chassis_index))
+        
+        
+    def scope_server(self, server_index):
+        self._ssh.send_expect_prompt("scope server " + str(server_index))
+        
+        
     def scope_server_from_top(self):
         self.scope_top()
-        if self._chassis_index:
-            self.scope_chassis(self._chassis_index)
+        self.scope_chassis(self._chassis_index)
         self.scope_server(self._server_index)
 
 
