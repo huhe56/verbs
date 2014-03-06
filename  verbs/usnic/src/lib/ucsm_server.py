@@ -75,6 +75,7 @@ class UcsmServer():
             cpu_core_count_list = self._ssh.send_match_list("show cpu", "(?<=CPU\d)(?:\s+\d+)")
             cpu_core_count_list = [int(x) for x in cpu_core_count_list]
             self._total_cpu_core_count = sum(cpu_core_count_list)
+            self._logger.debug("total cpu cores: " + str(self._total_cpu_core_count))
         return self._total_cpu_core_count
     
     

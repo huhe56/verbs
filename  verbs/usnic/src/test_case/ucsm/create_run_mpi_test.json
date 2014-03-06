@@ -1,0 +1,19 @@
+[
+	{
+		"name": "16 usNIC on 1 PF",
+		"type": "positive",
+		"np":   "16",
+		"mpi":  "All",
+		"node count": 2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	16
+					}
+				]
+			}
+		]
+	}
+]

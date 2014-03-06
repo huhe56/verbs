@@ -6,8 +6,8 @@ Created on Aug 8, 2013
 
 import pexpect, sys, re, os
 
-from main import define
-from main.define import Define
+from main_ucsm import define
+from main_ucsm.define import Define
 from lib.logger import MyLogger
 from utils.utils import Utils
 
