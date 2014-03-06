@@ -5,9 +5,9 @@ Created on Feb 27, 2014
 '''
 
 import json
-import time, sys, traceback
-from pprint import pprint
+import time, traceback
 
+from main_ucsm import define
 from main_ucsm.define import Define
 from main_ucsm.define_mpi import DefineMpi
 from lib.logger import MyLogger
@@ -17,26 +17,38 @@ from lib.node_compute import NodeCompute
 
 
 if __name__ == '__main__':
+    define.PEXPECT_OUTPUT_STDOUT = False
+    
     log = MyLogger.getLogger("create_run_mpi")
     
     path_vnic_default_json_file     = Define.PATH_TEST_CASE_UCSM + "vnic_default.json"
     path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi.json"
     
     vnic_default_data = json.load(open(path_vnic_default_json_file))
-    log.debug(vnic_default_data)
     test_case_data = json.load(open(path_create_run_mpi_json_file))
-    log.debug(test_case_data)
+    
+    #log.debug(vnic_default_data)
+    #log.debug(test_case_data)
     
     ucsm_server_list = UcsmServer.init_ucsm_server(Define.UCSM_HOSTNAME)
-    
+    test_result_summary = {}
     for test_case in test_case_data:
+        test_case_name = None
+        test_case_type = None
         try:
+            log.info("")
             test_case_name = test_case['name']
-            log.info("*"*25 + " " + test_case_name + " " + "*"*25)
+            test_case_type = test_case['type'] if 'type' in test_case else "positive"
             node_count = test_case['node count']
             node_list = test_case['nodes']
+            np = test_case['np'] if 'np' in test_case else None
+            mpi = test_case['mpi'] if 'mpi' in test_case else DefineMpi.MPI_CMD_DEFAULT
+            message_list = test_case['message'] if 'message' in test_case else [0]
+            
+            log.info("="*25 + " " + test_case_name + " " + "="*25)
+            
             node_list = Util.populate_node_list(node_count, node_list)
-            pprint(node_list)
+            #pprint(node_list)
             
             if len(node_list) <= len(ucsm_server_list):
                 i = 0
@@ -48,8 +60,8 @@ if __name__ == '__main__':
                     i += 1
                     
             if Define.CONFIG:
-                log.info("wait for nodes to reboot")
-                time.sleep(300)
+                log.info("wait for nodes to reboot ...")
+                time.sleep(420)
             
             i = 0
             host_list = []
@@ -77,27 +89,38 @@ if __name__ == '__main__':
                 i += 1
                 
             for host in host_list:
-                host.set_np(min_total_cpu_core_count)
+                host.set_min_total_cpu_core_count(min_total_cpu_core_count)
                 
-            np = min_total_cpu_core_count * len(host_list)
             param_dictionary = {
-                            DefineMpi.MPI_PARAM_HOST_LIST: host_list,
+                            DefineMpi.MPI_PARAM_CMD: mpi,
                             DefineMpi.MPI_PARAM_NP: np,
+                            DefineMpi.MPI_PARAM_HOST_LIST: host_list,
+                            DefineMpi.MPI_PARAM_MSG: message_list,
                             }
-            host_list[0].run_mpi(param_dictionary)
-            
-            log.info("="*25 + " Test Case Passed: " + test_case_name)
-            break
+            ret = host_list[0].run_mpi(param_dictionary, test_case_type)
+            if ret:
+                log.info("-"*25 + ">>> Test Case Passed: " + test_case_name)
+                test_result_summary[test_case_name] = {}
+                test_result_summary[test_case_name]['result'] = ret
+                test_result_summary[test_case_name]['type'] = test_case_type
+            else:
+                raise Exception("failed to run mpi")
+            #break
         except Exception, e:
-            log.info("="*25 + " Test Case Failed: " + test_case_name)
+            log.info("*"*25 + ">>> Test Case Failed: " + test_case_name)
             traceback.print_exc()
-            break
+            test_result_summary[test_case_name] = {}
+            test_result_summary[test_case_name]['result'] = ret
+            test_result_summary[test_case_name]['type'] = test_case_type
+            #break
     
-    '''
-    ucsm_server_list = UcsmServer.init_ucsm_server(Define.UCSM_HOSTNAME)
-    for ucsm_server in ucsm_server_list:
-        ucsm_server.get_all_vnics_attributes()
-        ucsm_server.delete_all_vnics()
-    '''
+    time.sleep(10)
+    log.info("")
+    log.info("")
+    log.info("="*25 + " Test Result Summary " + "="*25)
+    log.info("")
+    for test_case_name, test_result_data in test_result_summary.items():
+        result = "Passed" if test_result_data["result"] else "Failed"
+        log.info(result + ", " + test_result_data["type"] + ", " + test_case_name)
         
         

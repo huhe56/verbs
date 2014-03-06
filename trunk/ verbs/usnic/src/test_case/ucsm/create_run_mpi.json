@@ -1,6 +1,20 @@
 [
 	{
+		
+		"comment1": "required: name; node count; nodes",
+		"comment2": "type: [positive|negative], default=positive",
+		"comment3": "np: string of ['0-9'+|'+1'|'-1'], default=min cpu core count",
+		"comment4": "mpi [mpi test suite], default=Alltoall; ",
+		"comment5": "list of message index, default=[0]",
+		
+		"message 0": "All processes entering MPI_Finalize",
+		"message 1": "not enough usNIC",
+		"message 2": "not enough cpu core",
+		
 		"name": "1 usNIC on 1 PF",
+		"type": "positive",
+		"np":   "1",
+		"mpi":  "All",
 		"node count": 2,
 		"nodes": [
 			{
@@ -24,6 +38,9 @@
 	
 	{
 		"name": "16 usNIC on 1 PF",
+		"type": "positive",
+		"np":   "16",
+		"mpi":  "All",
 		"node count": 2,
 		"nodes": [
 			{
@@ -38,18 +55,20 @@
 	},
 	
 	{
-		"name": "2 PF 16 usNIC each in node 1, 2 PF 32 usNIC in node 2",
+		"name": "2 PF 32 usNIC each in node 1, 2 PF 32 usNIC in node 2",
+		"type": "positive",
+		"np":   "16",
 		"node count": 2,
 		"nodes": [
 			{
 				"vnics": [
 					{
 						"vlan": 	10,
-						"usnic":	16
+						"usnic":	32
 					},
 					{
 						"vlan": 	20,
-						"usnic":	16
+						"usnic":	32
 					}
 				]
 			},

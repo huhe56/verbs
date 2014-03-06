@@ -38,20 +38,27 @@ class DefineMpi:
     MPI_CMD_PINGPONG    = "pingpong"
     MPI_CMD_SENDRECV    = "Sendrecv"
     MPI_CMD_ALLTOALL    = "Alltoall"
-    MPI_CMD_ALL         = ""
+    MPI_CMD_ALL         = "All"
     MPI_CMD_DEFAULT     = MPI_CMD_ALLTOALL
     
-    MPI_CMD_TIMEOUT_PINGPONG    = 60
-    MPI_CMD_TIMEOUT_ALLTOALL    = 1800
-    MPI_CMD_TIMEOUT_ALL         = 3600
+    MPI_CMD_TIMEOUT_PINGPONG    = 30
+    MPI_CMD_TIMEOUT_ALLTOALL    = 600
+    MPI_CMD_TIMEOUT_ALL         = 1800
     
-    MPI_MESSAGE_FINISH          = "All processes entering MPI_Finalize"
-    MPI_MESSAGE_NOT_ENOUGH_VNIC = "not enough usNIC"
-    MPI_MESSAGE_NOT_ENOUGH_CORE = "An invalid physical processor ID"
+    MPI_MESSAGE_FINISH              = "All processes entering MPI_Finalize"
+    MPI_MESSAGE_NOT_ENOUGH_USNIC    = "not enough usNIC"
+    MPI_MESSAGE_NOT_ENOUGH_CORE     = "An invalid physical processor ID was returned"
+    MPI_MESSAGE_DEFAULT             = MPI_MESSAGE_FINISH
+    
     MPI_MESSAGE_ABORT           = "abort"
     MPI_MESSAGE_WARN            = "warn"
     MPI_MESSAGE_ERROR           = "error"
-    MPI_MESSAGE_DEFAULT         = MPI_MESSAGE_FINISH
-
-    SHELL_STATUS_0_MESSAGE_LIST = [MPI_MESSAGE_FINISH, MPI_MESSAGE_NOT_ENOUGH_VNIC]
-    SHELL_STATUS_1_MESSAGE_LIST = [MPI_MESSAGE_NOT_ENOUGH_CORE]
+    
+    MPI_MESSAGE_DICT = {
+                        0: MPI_MESSAGE_FINISH,
+                        1: MPI_MESSAGE_NOT_ENOUGH_USNIC,
+                        2: MPI_MESSAGE_NOT_ENOUGH_CORE
+                        }
+    
+    
+    

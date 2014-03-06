@@ -30,7 +30,7 @@ class NodeCompute(RedHat):
         self._usnic_eth_list = {}
         self._total_cpu_core_count = None
         self._np = None
-        
+        self._min_total_cpu_core_count = None
 
     @staticmethod
     def wait_for_node_to_boot_up(node_ip):
@@ -46,6 +46,7 @@ class NodeCompute(RedHat):
                     try_count = try_count + 1
                     time.sleep(interval)
                 else:
+                    node.get_ssh().send_expect_prompt("uptime")
                     return node
             except:
                 Util._logger.info("exception is raised in ssh")
@@ -53,6 +54,14 @@ class NodeCompute(RedHat):
                 time.sleep(interval)
         raise Exception("Failed to ssh to " + node_ip + " for " + probe_max_count + " times")
             
+
+    def set_min_total_cpu_core_count(self, count):
+        self._min_total_cpu_core_count = count
+        
+        
+    def get_min_total_cpu_core_count(self):
+        return self._min_total_cpu_core_count
+        
 
     def set_np(self, np):
         self._np = np
@@ -79,8 +88,10 @@ class NodeCompute(RedHat):
 
 
     def get_usnic_status_data(self):
+        self._logger.debug(self._hostname + " in get usnic status data")
         self._ssh.send_expect_prompt("/opt/cisco/usnic/bin/usnic_status")
         output = self._ssh.get_output()
+        self._logger.debug(output)
         line_list = output.split("\r\n")
         usnic_index = None
         for line in line_list:
@@ -212,8 +223,8 @@ class NodeCompute(RedHat):
                     usnic_vf_configured_count = usnic_status_data["vf configured count"]
                     usnic_vf_used_count = usnic_status_data["vf used count"]
                     
-                    vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "], usnic configured count [" + str(vnic_usnic_count) +"], expected used count [" + self._np + "]"
-                    eth_str  = "eth "  + usnic_index + " mac [" + usnic_mac + "], usnic configured count [" + str(usnic_vf_configured_count) + "], actual used count [" + usnic_vf_used_count + "]"     
+                    vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "], usnic configured count [" + str(vnic_usnic_count) +"], expect used count [" + str(self._np) + "]"
+                    eth_str  = "eth "  + usnic_index + " mac [" + usnic_mac + "], usnic configured count [" + str(usnic_vf_configured_count) + "], actual used count [" + str(usnic_vf_used_count) + "]"     
                                        
                     if vnic_mac == usnic_mac and vnic_usnic_count == usnic_vf_configured_count and self._np == usnic_vf_used_count:
                         self._logger.info("Passed: vnic and eth's mac and usnic count are the same")
@@ -231,58 +242,75 @@ class NodeCompute(RedHat):
     
     def check_all_hosts_used_vf(self, host_list):
         for host in host_list:
-            self._logger.info("host: " + host.get_host_name())
             ret = host.check_usnic_used_vf()        
             if ret:
-                self._logger.info("vf used counts equal")
+                self._logger.info("#"*10 + " " + host.get_host_name() + " vf used counts equal")
                 self._vf_used_count_equal_dict[host.get_host_name()] = True
             else:
-                self._logger.error("vf used counts not equal")
+                self._logger.error("#"*10 + " " + host.get_host_name() + " vf used counts not equal")
                 self._vf_used_count_equal_dict[host.get_host_name()] = False
-                        
             host.exit()
             
     
-    def run_mpi(self, param_dictionary):
-        
-        cmd = DefineMpi.MPI_CMD_DEFAULT
-        np  = DefineMpi.MPI_NP_DEFAULT
-        mca = DefineMpi.MPI_MCA_DEFAULT 
-        msg = DefineMpi.MPI_MESSAGE_DEFAULT
-        
+    def run_mpi(self, param_dictionary, test_case_type="positive"):
+                
+        cmd = None
+        np_str = None
         host_list = None
+        msg_list = None
+        mca = DefineMpi.MPI_MCA_DEFAULT 
         
         key_list = param_dictionary.keys()
         if DefineMpi.MPI_PARAM_HOST_LIST in key_list:
             host_list = param_dictionary[DefineMpi.MPI_PARAM_HOST_LIST]
         if DefineMpi.MPI_PARAM_NP in key_list:
-            np = param_dictionary[DefineMpi.MPI_PARAM_NP]
+            np_str = param_dictionary[DefineMpi.MPI_PARAM_NP]
         if DefineMpi.MPI_PARAM_MCA in key_list:
             mca = param_dictionary[DefineMpi.MPI_PARAM_MCA]
         if DefineMpi.MPI_PARAM_CMD in key_list:
             cmd = param_dictionary[DefineMpi.MPI_PARAM_CMD]
         if DefineMpi.MPI_PARAM_MSG in key_list:
-            msg = param_dictionary[DefineMpi.MPI_PARAM_MSG]
-        
-        host_name_list = [host.get_host_name() for host in host_list]
-        host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_name_list)])
-        np_str   = " ".join([DefineMpi.MPI_PARAM_NP, str(np)])
-        mca_str  = " ".join([DefineMpi.MPI_PARAM_MCA, mca])
-        cmd_str  = " ".join(["mpirun", host_str, np_str, mca_str, DefineMpi.MPI_PATH, cmd])
-        
+            msg_list = param_dictionary[DefineMpi.MPI_PARAM_MSG]
+            
+        np = None
+        total_np = None
+        if not np_str:
+            np = self._min_total_cpu_core_count
+            total_np = self._min_total_cpu_core_count * len(host_list)
+        else:
+            np = int(np_str)
+            total_np = int(np_str) * len(host_list)
+            
         timeout = DefineMpi.MPI_CMD_TIMEOUT_ALL
         if cmd == DefineMpi.MPI_CMD_PINGPONG:
             timeout = DefineMpi.MPI_CMD_TIMEOUT_PINGPONG
         elif cmd == DefineMpi.MPI_CMD_ALLTOALL:
             timeout = DefineMpi.MPI_CMD_TIMEOUT_ALLTOALL
+        elif cmd == DefineMpi.MPI_CMD_ALL:
+            timeout = DefineMpi.MPI_CMD_TIMEOUT_ALL
+            cmd = ""    
+        
+        host_name_list = [host.get_host_name() for host in host_list]
+        host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_name_list)])
+        np_str   = " ".join([DefineMpi.MPI_PARAM_NP, str(total_np)])
+        mca_str  = " ".join([DefineMpi.MPI_PARAM_MCA, mca])
+        cmd_str  = " ".join(["mpirun", host_str, np_str, mca_str, DefineMpi.MPI_PATH, cmd])
         
         self._logger.info(cmd_str)
         self._logger.debug("timeout: " + str(timeout))
         self._ssh.send(cmd_str)
         
-        if cmd != DefineMpi.MPI_CMD_PINGPONG:
+        if test_case_type == "positive" and cmd != DefineMpi.MPI_CMD_PINGPONG:
             time.sleep(10)
-            find_used_vf_count_thread = threading.Thread(target=self.check_all_hosts_used_vf, args=(host_list))
+            self._logger.info("checking host vf used count ...")
+            new_host_list = []
+            for host in host_list:
+                new_host = NodeCompute(host.get_host_name())
+                new_host.set_ucsm_server_vnic_dict(host.get_ucsm_server_vnic_dict())
+                new_host.set_total_cpu_core_count(host.get_total_cpu_core_count())
+                new_host.set_np(np)
+                new_host_list.append(new_host)
+            find_used_vf_count_thread = threading.Thread(target=self.check_all_hosts_used_vf, args=[new_host_list])
             find_used_vf_count_thread.daemon = True
             find_used_vf_count_thread.start()
         
@@ -290,30 +318,37 @@ class NodeCompute(RedHat):
         self._ssh.expect(prompt_pattern, timeout)
         self._current_output = self._ssh.get_output()
         
-        if re.search(msg, self._current_output, re.IGNORECASE):
-            self._logger.info("found message: " + msg)
-            if msg in DefineMpi.SHELL_STATUS_0_MESSAGE_LIST:
-                if cmd != DefineMpi.MPI_CMD_PINGPONG:
-                    for host_name, result in self._vf_used_count_equal_dict.iteritems():
-                        self._logger.info(host_name)
-                        self._logger.info(result)
-                        if not result:
-                            return False
-                    return True
+        test_case_passed = True
+        found_all_messages = True
+        for msg_index in msg_list:
+            msg = DefineMpi.MPI_MESSAGE_DICT[msg_index]
+            if not re.search(msg, self._current_output, re.IGNORECASE):
+                found_all_messages = False
+                self._logger.info("Failed: could not find expected message: " + msg)
+                test_case_passed = False
             else:
-                return True
-        else:
-            self._logger.error("could not find message: " + msg)
-            if self.mpi_run_has_error():
-                self._logger.error("found error message")
-            if self.mpi_run_has_aborted():
-                self._logger.error("found abort message")
-            if self.mpi_run_not_enough_core():
-                self._logger.error("found not enough core message")
-            if self.mpi_run_not_enough_usnic():
-                self._logger.error("found not enough usnic message")
-            return False
+                self._logger.info("Passed: found expected message: " + msg)
         
+        if found_all_messages:
+            self._logger.info("Passed: found all expected messages")
+            
+        if test_case_type == "positive" and cmd != DefineMpi.MPI_CMD_PINGPONG:
+            if self.mpi_run_has_error():
+                self._logger.error("Failed: found error message")
+                test_case_passed = False
+            if self.mpi_run_has_aborted():
+                self._logger.error("Failed: found abort message")
+                test_case_passed = False
+            for host_name, equal_result in self._vf_used_count_equal_dict.items():
+                if equal_result:
+                    self._logger.info("Passed: used vf count is correct in host " + host_name)
+                else:
+                    self._logger.error("Failed: used vf count is not correct in host " + host_name)
+                    test_case_passed = False
+                    
+        return test_case_passed
+                    
+                    
     
     
     def mpi_run_has_error(self):
@@ -330,7 +365,7 @@ class NodeCompute(RedHat):
             return False
         
     def mpi_run_not_enough_usnic(self):
-        if re.search(DefineMpi.MPI_MESSAGE_NOT_ENOUGH_VNIC, self._current_output, re.IGNORECASE):
+        if re.search(DefineMpi.MPI_MESSAGE_NOT_ENOUGH_USNIC, self._current_output, re.IGNORECASE):
             return True
         else:
             return False

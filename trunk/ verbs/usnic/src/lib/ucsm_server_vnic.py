@@ -69,7 +69,7 @@ class UcsmServerVnic(object):
             self._ucsm_server._ssh.send_expect_prompt("commit-buffer")
             self._logger.info(self._ucsm_server._service_profile + " " + self._name + " is deleted")
         else:
-            self._logger.info("eth-1 can't be deleted")
+            self._logger.info(self._ucsm_server._service_profile + " " + self._name + " can't be deleted")
         
         
     def configure(self, vnic_data, vnic_default_data):
@@ -145,9 +145,9 @@ class UcsmServerVnic(object):
         sub_str = "usNIC Connection Policy Name: " + self._usnic_policy
         if not expect_message: 
             if sub_str in output:
-                self._logger.info("Passed: " + self._usnic_policy + " has been created")
+                self._logger.info("Passed: " + self._ucsm_server._service_profile + " " + self._name + " " + self._usnic_policy + " has been created")
             else:
-                self._logger.info("Failed: " + self._usnic_policy + " has not been created")
+                self._logger.info("Failed: " + self._ucsm_server._service_profile + " " + self._name + " " + self._usnic_policy + " has not been created")
                 raise Exception("Failed to create usnic " + self._usnic_policy)
         else:
             pass
