@@ -11,7 +11,7 @@ class Define(object):
     classdocs
     '''
     
-    CONFIG = True
+    CONFIG = False
     
     UCSM_BUNDLE_LATEST_BUILD_NUMBER     = 333
     UCSM_BUNDLE_LATEST_BUILD_REVISION   = "131023-180144-rev148217-333"
@@ -115,8 +115,13 @@ class Define(object):
     MPI_MCA         = "--mca btl usnic,sm,self"
     MPI_PATH        = "/home/huhe/ompi-tests/imb/src/IMB-MPI1"
     
-    MPI_CMD_PINGPOND    = "pingpong"
+    USNIC_MESSAGE_OK                = "vNIC Config Issues: N/A"
+    USNIC_MESSAGE_INSUFFICIENT_VNIC = "vNIC Config Issues: Connection Placement,Insufficient Vnic Capacity"
     
+    USNIC_MESSAGE_DICT = {
+                        0: USNIC_MESSAGE_OK,
+                        1: USNIC_MESSAGE_INSUFFICIENT_VNIC,
+                          }
     
     
     

@@ -115,6 +115,7 @@ class UcsmServerVnic(object):
             self.set_default_net()
             self.set_mac_address()
             self.set_mtu()
+            self.set_order()
             self.set_adapter_policy()
             self.set_qos_policy()
             self.create_usnic()
@@ -124,6 +125,11 @@ class UcsmServerVnic(object):
         self._ucsm_server.scope_service_profile_from_top()
         cmd = "create vnic " + self._name + " eth-if " + self._vlan_policy + " fabric " + self._fabric
         self._ucsm_server._ssh.send_expect_prompt(cmd)
+        
+        
+    def set_order(self):
+        order = int(self._vlan/10) + 1
+        self._ucsm_server._ssh.send_expect_prompt("set order " + str(order))
         
         
     def create_vlan(self):
@@ -145,9 +151,9 @@ class UcsmServerVnic(object):
         sub_str = "usNIC Connection Policy Name: " + self._usnic_policy
         if not expect_message: 
             if sub_str in output:
-                self._logger.info("Passed: " + self._ucsm_server._service_profile + " " + self._name + " " + self._usnic_policy + " has been created")
+                self._logger.info("Passed: " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy + " has been created")
             else:
-                self._logger.info("Failed: " + self._ucsm_server._service_profile + " " + self._name + " " + self._usnic_policy + " has not been created")
+                self._logger.info("Failed: " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy + " has not been created")
                 raise Exception("Failed to create usnic " + self._usnic_policy)
         else:
             pass

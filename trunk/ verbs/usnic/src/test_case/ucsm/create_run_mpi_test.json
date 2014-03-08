@@ -1,9 +1,10 @@
 [
+	
 	{
-		"name": "16 usNIC on 1 PF",
-		"type": "positive",
-		"np":   "16",
-		"mpi":  "All",
+		"name": "15 usNIC on one PF, 17 usNIC on another PF, np=16*2",
+		"type": "negative",
+		"np":   "18",
+		"message": [1, 2],
 		"node count": 2,
 		"nodes": [
 			{
@@ -11,6 +12,10 @@
 					{
 						"vlan": 	10,
 						"usnic":	16
+					},
+					{
+						"vlan": 	20,
+						"usnic":	116
 					}
 				]
 			}
