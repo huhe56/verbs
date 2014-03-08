@@ -1,21 +1,24 @@
 [
 	
 	{
-		"name": "15 usNIC on one PF, 17 usNIC on another PF, np=16*2",
+		"name": "116 usNIC on 2 PFs and 1 usNIC on 3rd PF on one adapter",
 		"type": "negative",
-		"np":   "18",
-		"message": [1, 2],
-		"node count": 2,
+		"node count": 1,
 		"nodes": [
 			{
 				"vnics": [
 					{
 						"vlan": 	10,
-						"usnic":	16
+						"usnic":	58
 					},
 					{
 						"vlan": 	20,
-						"usnic":	116
+						"usnic":	58
+					},
+					{
+						"vlan": 	30,
+						"usnic":	1,
+						"message":	1
 					}
 				]
 			}

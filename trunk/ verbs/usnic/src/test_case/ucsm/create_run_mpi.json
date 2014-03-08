@@ -1,10 +1,11 @@
 [
 	{
-		"comment1": "required: name; node count; nodes, np",
-		"comment2": "type: [positive|negative], default=positive",
-		"comment3": "np: string of ['0-9'+|'+1'|'-1'], default=min cpu core count",
-		"comment4": "mpi [mpi test suite], default=Alltoall; ",
-		"comment5": "list of message index, default=[0]",
+		"comment": "required: name; node count; nodes",
+		"comment": "np: default=don't check configured and used vf count and don't run mpi",
+		"comment": "type: [positive|negative], default=positive",
+		"comment": "np: string of ['0-9'+|'+1'|'-1'], default=min cpu core count",
+		"comment": "mpi [mpi test suite], default=Alltoall; ",
+		"comment": "list of message index, default=[0]",
 		
 		"message 0": "All processes entering MPI_Finalize",
 		"message 1": "not enough usNIC",
@@ -323,6 +324,72 @@
 					{
 						"vlan": 	20,
 						"usnic":	17
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "1 usNIC on one PF and 116 on another PF on one adapter",
+		"type": "negative",
+		"node count": 2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	1
+					},
+					{
+						"vlan": 	20,
+						"usnic":	116,
+						"message":	1
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	1
+					},
+					{
+						"vlan": 	20,
+						"usnic":	1
+					},
+					{
+						"vlan": 	30,
+						"usnic":	116,
+						"message":	1
+					},
+					{
+						"vlan": 	40,
+						"usnic":	116,
+						"message":	1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "116 usNIC on 2 PFs and 1 usNIC on 3rd PF on one adapter",
+		"type": "negative",
+		"node count": 1,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 	10,
+						"usnic":	58
+					},
+					{
+						"vlan": 	20,
+						"usnic":	58
+					},
+					{
+						"vlan": 	30,
+						"usnic":	1,
+						"message":	1
 					}
 				]
 			}

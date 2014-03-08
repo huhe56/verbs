@@ -33,7 +33,7 @@ class UcsmServerVnic(object):
         self._mac           = None
         self._adapter_policy    = None
         self._qos_policy        = None
-        
+        self._usnic_message_index = None
         
         
     @staticmethod
@@ -109,6 +109,11 @@ class UcsmServerVnic(object):
         else:
             self._usnic = vnic_default_data["usnic"]
         self._usnic_policy = str(self._usnic) + "_usNIC"
+        
+        if "message" in vnic_data:
+            self._usnic_message_index = vnic_data['message']
+        else:
+            self._usnic_message_index = vnic_default_data['message']
             
         if Define.CONFIG:
             self.create_vnic_from_top()
@@ -143,21 +148,22 @@ class UcsmServerVnic(object):
         self._ucsm_server._ssh.send_expect_prompt("exit")
         
         
-    def create_usnic(self, expect_message=None):
+    def create_usnic(self):
         self._ucsm_server._ssh.send_expect_prompt("create usnic-conn-policy-ref " + self._usnic_policy)
         self._ucsm_server.commit()
         self._ucsm_server._ssh.send_expect_prompt("show detail")
         output = self._ucsm_server._ssh.get_output()
         sub_str = "usNIC Connection Policy Name: " + self._usnic_policy
-        if not expect_message: 
-            if sub_str in output:
-                self._logger.info("Passed: " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy + " has been created")
-            else:
-                self._logger.info("Failed: " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy + " has not been created")
-                raise Exception("Failed to create usnic " + self._usnic_policy)
+        if sub_str in output:
+            self._logger.info("Passed: " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy + " has been created")
+            message = Define.USNIC_MESSAGE_DICT[self._usnic_message_index]
+            found = self._ucsm_server.check_profile_vnic_status(message)
+            if found:
+                self._logger.info("Passed: " + self._ucsm_server._service_profile + ", " + self._name + ", found usNIC config message: " + message)
         else:
-            pass
-            ''' TBD for negative test case '''
+            self._logger.info("Failed: " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy + " has not been created")
+            raise Exception("Failed to create usnic " + self._usnic_policy)
+        
         self._ucsm_server._ssh.send_expect_prompt("exit")
         
         
