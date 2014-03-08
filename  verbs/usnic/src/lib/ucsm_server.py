@@ -67,6 +67,17 @@ class UcsmServer():
         if Define.CONFIG:
             self.commit()
             self.reboot_from_top()
+        return True
+    
+    
+    def check_profile_vnic_status(self, message):
+        self.scope_service_profile_from_top()
+        match_list = self._ssh.send_match_list("show status detail", message)
+        self._logger.debug(match_list)
+        if match_list:
+            if len(match_list) == 1:
+                return True
+        raise Exception("Can not find usnic config message: " + message)
     
     
     def get_total_cpu_core_count(self):
