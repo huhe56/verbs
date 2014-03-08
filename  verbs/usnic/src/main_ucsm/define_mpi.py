@@ -15,6 +15,9 @@ class DefineMpi:
     #NODE_NUMBER     = len(NODE_HOST_LIST)
     #NODE_HOST_LIST_DEFAULT = NODE_HOST_LIST
     
+    TEST_TYPE_POSITIVE  = "positive"
+    TEST_TYPE_NEGATIVE  = "negative"
+    
     MPI_PARAM_CMD                   = "cmd"
     MPI_PARAM_MSG                   = "message"
     MPI_PARAM_VF_USED_COUNT_LIST    = "vf_used_count_list"
@@ -59,6 +62,8 @@ class DefineMpi:
                         1: MPI_MESSAGE_NOT_ENOUGH_USNIC,
                         2: MPI_MESSAGE_NOT_ENOUGH_CORE
                         }
+    
+    MPI_NEGATIVE_MESSAGE_LIST = [1, 2]
     
     
     

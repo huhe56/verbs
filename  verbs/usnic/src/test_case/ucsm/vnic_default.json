@@ -1,5 +1,15 @@
 {
+	"comment1": "required: vlan, usnic",
+	"comment2": "order: default=vlan/10+1",
+	"comment3": "name: default=eth-vlan",
+	"comment4": "fabric: [a|b|a-b|b-a], default=[a|b],",
+	"comment5": "default=blade: 00:25:B5:C1:B2:10, rack: 00:25:B5:CC:06:10",
+	"comment6": "usnic: max=116 on 1 adapter",
 	
+	"message 0": "vNIC Config Issues: N/A",
+	"message 1": "vNIC Config Issues: Connection Placement,Insufficient Vnic Capacity",
+		
+	"order":	"default",
 	"vlan": 	"required",
 	"name": 	"default",
 	"fabric": 	"default",
@@ -9,5 +19,6 @@
 	"adapter policy": 	"USNIC",
 	"qos policy": 		"Platinum-9216",
 	
-	"usnic":			16
+	"usnic":			16,
+	"usnic message":	0
 }
