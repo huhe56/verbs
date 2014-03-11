@@ -51,6 +51,7 @@ class DefineMpi:
     MPI_MESSAGE_FINISH              = "All processes entering MPI_Finalize"
     MPI_MESSAGE_NOT_ENOUGH_USNIC    = "not enough usNIC"
     MPI_MESSAGE_NOT_ENOUGH_CORE     = "An invalid physical processor ID was returned"
+    MPI_MESSAGE_MTU_NOT_MATCH       = "The MTU does not match on local and remote hosts"
     MPI_MESSAGE_DEFAULT             = MPI_MESSAGE_FINISH
     
     MPI_MESSAGE_ABORT           = "abort"
@@ -60,10 +61,11 @@ class DefineMpi:
     MPI_MESSAGE_DICT = {
                         0: MPI_MESSAGE_FINISH,
                         1: MPI_MESSAGE_NOT_ENOUGH_USNIC,
-                        2: MPI_MESSAGE_NOT_ENOUGH_CORE
+                        2: MPI_MESSAGE_NOT_ENOUGH_CORE,
+                        3: MPI_MESSAGE_MTU_NOT_MATCH
                         }
     
-    MPI_NEGATIVE_MESSAGE_LIST = [1, 2]
+    MPI_NEGATIVE_MESSAGE_LIST = [1, 2, 3]
     
     
     

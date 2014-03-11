@@ -5,6 +5,8 @@
 	"comment": "fabric: [a|b|a-b|b-a], default=[a|b],",
 	"comment": "default=blade: 00:25:B5:C1:B2:10, rack: 00:25:B5:CC:06:10",
 	"comment": "usnic: max=116 on 1 adapter",
+	"comment": "expect usnic: usnic expected in host, default=usnic",
+	"comment": "qos policy: BestEffort-1500; Platinum-9216",
 	
 	"message 0": "vNIC Config Issues: N/A",
 	"message 1": "vNIC Config Issues: Connection Placement,Insufficient Vnic Capacity",
@@ -19,6 +21,7 @@
 	"adapter policy": 	"USNIC",
 	"qos policy": 		"Platinum-9216",
 	
-	"usnic":	16,
+	"usnic":		16,
+	"expect usnic": 16,
 	"message":	0
 }

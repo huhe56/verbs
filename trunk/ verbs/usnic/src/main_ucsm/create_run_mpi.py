@@ -43,6 +43,8 @@ if __name__ == '__main__':
             node_count = test_case['node count']
             node_list = test_case['nodes']
             np = test_case['np'] if 'np' in test_case else None
+            config_only = test_case['config only'] if 'config only' in test_case else None
+            continue_with_previous_case = test_case['contiune'] if 'continue' in test_case else None
             mpi = test_case['mpi'] if 'mpi' in test_case else DefineMpi.MPI_CMD_DEFAULT
             message_list = test_case['message'] if 'message' in test_case else [0]
             
@@ -61,9 +63,9 @@ if __name__ == '__main__':
                     ucsm_server.configure(node, vnic_default_data)
                     i += 1
             
-            if np:
+            if not config_only:
                 if Define.CONFIG:
-                    log.info("wait for nodes to reboot ...")
+                    log.info("waiting for nodes to reboot ...")
                     time.sleep(420)
                 
                 i = 0
@@ -78,6 +80,7 @@ if __name__ == '__main__':
                     
                 for host in host_list:
                     host.check_usnic_configured_vf()
+                    host.set_host_mtu()
                     
                 i = 0
                 min_total_cpu_core_count = 9999999

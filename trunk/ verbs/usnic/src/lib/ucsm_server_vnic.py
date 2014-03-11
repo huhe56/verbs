@@ -27,6 +27,7 @@ class UcsmServerVnic(object):
         self._vlan          = None
         self._vlan_policy   = None
         self._usnic         = None
+        self._expect_usnic  = None
         self._usnic_policy  = None
         self._fabric        = None
         self._mtu           = None
@@ -110,6 +111,11 @@ class UcsmServerVnic(object):
             self._usnic = vnic_default_data["usnic"]
         self._usnic_policy = str(self._usnic) + "_usNIC"
         
+        if "expect usnic" in vnic_data:
+            self._expect_usnic = vnic_data["expect usnic"]
+        else:
+            self._expect_usnic = self._usnic
+        
         if "message" in vnic_data:
             self._usnic_message_index = vnic_data['message']
         else:
@@ -187,8 +193,16 @@ class UcsmServerVnic(object):
         return self._usnic
     
     
+    def get_expect_used_usnic_count(self):
+        return self._expect_usnic
+    
+    
     def get_mac_address(self):
         return self._mac
+    
+    
+    def get_mtu(self):
+        return self._mtu
     
     
     def get_vlan(self):
