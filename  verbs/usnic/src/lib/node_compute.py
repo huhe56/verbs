@@ -128,9 +128,29 @@ class NodeCompute(RedHat):
                 m = p_mtu.search(line)
                 if m:
                     mtu = m.groups("mtu")[0]
-                    self._usnic_eth_list[eth_index]["mtu"] = mtu
+                    self._usnic_eth_list[eth_index]["mtu"] = int(mtu)
+                    eth_index = None
         self._logger.debug(self._usnic_eth_list)
         
+    
+    def set_host_mtu(self):
+        self._logger.info("setting host mtu if any ...")
+        self.get_usnic_status_data()
+        self.get_ifconfig_data()
+        for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
+            vnic_mac = vnic_data.get_mac_address()
+            vnic_mtu = vnic_data.get_mtu()
+            for usnic_index, usnic_status_data in self._usnic_status_dict.items():
+                usnic_mac = usnic_status_data["mac"]
+                usnic_eth = usnic_status_data["eth"]
+                if vnic_mac == usnic_mac:
+                    eth_mtu = self._usnic_eth_list[usnic_eth]["mtu"]
+                    if vnic_mtu != eth_mtu:
+                        self._logger.info(self._hostname + ", " + usnic_eth + ", mtu set from " + str(eth_mtu) + " to " + str(vnic_mtu))
+                        self.set_mtu(usnic_eth, vnic_mtu)
+                        break
+        self.show_ifconfig()
+    
         
     def check_usnic_configured_vf(self):
         self._logger.info("checking host configured vf count ...")
@@ -217,6 +237,7 @@ class NodeCompute(RedHat):
                 match_mac = False
                 vnic_mac = vnic_data.get_mac_address()
                 vnic_usnic_count = vnic_data.get_usnic_count()
+                expected_vf_used_count = vnic_data.get_expect_used_usnic_count()
                 vnic_str = None
                 eth_str = None
                 for usnic_index, usnic_status_data in self._usnic_status_dict.items():
@@ -224,7 +245,9 @@ class NodeCompute(RedHat):
                     usnic_vf_configured_count = usnic_status_data["vf configured count"]
                     usnic_vf_used_count = usnic_status_data["vf used count"]
                     
-                    expected_vf_used_count = 0 if vnic_usnic_count < self._np else self._np
+                    #expected_vf_used_count = 0 if vnic_usnic_count < self._np else self._np
+                    if vnic_usnic_count < self._np:
+                        expected_vf_used_count = 0
                     
                     vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "], usnic configured count [" + str(vnic_usnic_count) +"], expect used count [" + str(expected_vf_used_count) + "]"
                     eth_str  = "eth "  + usnic_index + " mac [" + usnic_mac + "], usnic configured count [" + str(usnic_vf_configured_count) + "], actual used count [" + str(usnic_vf_used_count) + "]"     
