@@ -33,6 +33,7 @@ class Define(object):
     PATH_USNIC_LOG          = PATH_USNIC_ROOT + "log/"
     PATH_USNIC_LOG_FILE     = PATH_USNIC_LOG + "pexpect.log"
     PATH_USNIC_LOG_FILE_ALL = PATH_USNIC_LOG + "all.log"
+    PATH_USNIC_LOG_FILE_CONSOLE = PATH_USNIC_LOG + "console.log"
 
     PATH_TEST_CASE      = PATH_USNIC_SRC + "test_case/"
     PATH_TEST_CASE_UCSM = PATH_TEST_CASE + "ucsm/"

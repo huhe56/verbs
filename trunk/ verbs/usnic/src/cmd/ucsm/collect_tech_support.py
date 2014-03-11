@@ -28,7 +28,7 @@ if __name__ == '__main__':
     cmd14 = "show tech-support server 4 detail"
     
     
-    for cmd in [cmd1, cmd2, cmd11, cmd12]:
+    for cmd in [cmd2]:
         Util.collect_tech_support(ssh, cmd)
     
     '''

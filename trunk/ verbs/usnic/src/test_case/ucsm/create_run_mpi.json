@@ -6,7 +6,6 @@
 		"comment": "np: string of ['0-9'+|'+1'|'-1'], default=min cpu cure in the cluster",
 		"comment": "mpi: [mpi test suite], default=Alltoall; ",
 		"comment": "message: list of message index, default=[0]",
-		"comment": "continue: continue with previous test case without vnic clean out, TBD",
 		
 		"message 0": "All processes entering MPI_Finalize",
 		"message 1": "not enough usNIC",
@@ -579,6 +578,89 @@
 						"usnic":		16,
 						"expect usnic": 16,
 						"mtu":			9000
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"change usNIC from 32 to 16 on 1 PF",
+		"type": 		"positive",
+		"np":  			"16",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		32,
+						"change usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"change usNIC from 8 to 32 on 2 PF",
+		"type": 		"positive",
+		"np":  			"16",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		8,
+						"change usnic":	32
+					},
+					{
+						"vlan": 		20,
+						"usnic":		8,
+						"change usnic":	32
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"max usNIC on 2 PF then add 1 more to one PF in one adapter",
+		"type": 		"negative",
+		"config only":  "yes",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		58
+					},
+					{
+						"vlan": 		20,
+						"usnic":		58,
+						"change usnic":	59,
+						"change message": 1
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		58
+					},
+					{
+						"vlan": 		20,
+						"usnic":		58,
+						"change usnic":	59,
+						"change message": 1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		58
+					},
+					{
+						"vlan": 		40,
+						"usnic":		58
 					}
 				]
 			}

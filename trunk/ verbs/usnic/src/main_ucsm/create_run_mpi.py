@@ -44,7 +44,6 @@ if __name__ == '__main__':
             node_list = test_case['nodes']
             np = test_case['np'] if 'np' in test_case else None
             config_only = test_case['config only'] if 'config only' in test_case else None
-            continue_with_previous_case = test_case['contiune'] if 'continue' in test_case else None
             mpi = test_case['mpi'] if 'mpi' in test_case else DefineMpi.MPI_CMD_DEFAULT
             message_list = test_case['message'] if 'message' in test_case else [0]
             
@@ -130,8 +129,12 @@ if __name__ == '__main__':
     log.info("")
     log.info("="*25 + " Test Result Summary " + "="*25)
     log.info("")
+    i = 0
     for test_case_result in test_result_summary:
-        result = "Passed" if test_case_result["result"] else "Failed"
+        i += 1
+        number_str = "%03d" %i
+        result = number_str + ", Passed" if test_case_result["result"] else "Failed"
         log.info(result + ", " + test_case_result["type"] + ", " + test_case_result['name'])
+        
         
         

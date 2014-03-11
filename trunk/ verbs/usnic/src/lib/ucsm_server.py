@@ -73,7 +73,7 @@ class UcsmServer():
     def check_profile_vnic_status(self, message):
         self.scope_service_profile_from_top()
         match_list = self._ssh.send_match_list("show status detail", message)
-        self._logger.debug(match_list)
+        #self._logger.debug(match_list)
         if match_list:
             if len(match_list) == 1:
                 return True
