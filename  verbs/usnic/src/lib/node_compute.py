@@ -245,9 +245,8 @@ class NodeCompute(RedHat):
                     usnic_vf_configured_count = usnic_status_data["vf configured count"]
                     usnic_vf_used_count = usnic_status_data["vf used count"]
                     
-                    #expected_vf_used_count = 0 if vnic_usnic_count < self._np else self._np
-                    if vnic_usnic_count < self._np:
-                        expected_vf_used_count = 0
+                    if not expected_vf_used_count:
+                        expected_vf_used_count = 0 if vnic_usnic_count < self._np else self._np
                     
                     vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "], usnic configured count [" + str(vnic_usnic_count) +"], expect used count [" + str(expected_vf_used_count) + "]"
                     eth_str  = "eth "  + usnic_index + " mac [" + usnic_mac + "], usnic configured count [" + str(usnic_vf_configured_count) + "], actual used count [" + str(usnic_vf_used_count) + "]"     

@@ -6,6 +6,7 @@ Created on Aug 19, 2013
 
 import logging
 import os
+from main_ucsm.define import Define
 
 class MyLogger(object):
     '''
@@ -27,12 +28,9 @@ class MyLogger(object):
             # formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
             formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             
-            '''
-            mkdir(Define._PathLog)
-            loggerHandler2 = logging.FileHandler(Define._PathLogFile)
+            loggerHandler2 = logging.FileHandler(Define.PATH_USNIC_LOG_FILE_CONSOLE)
             loggerHandler2.setFormatter(formatter)
             logger.addHandler(loggerHandler2)
-            '''
             
             loggerHandler = logging.StreamHandler()
             loggerHandler.setFormatter(formatter)

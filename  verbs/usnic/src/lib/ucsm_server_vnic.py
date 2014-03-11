@@ -28,6 +28,7 @@ class UcsmServerVnic(object):
         self._vlan_policy   = None
         self._usnic         = None
         self._expect_usnic  = None
+        self._change_usnic  = None
         self._usnic_policy  = None
         self._fabric        = None
         self._mtu           = None
@@ -35,6 +36,7 @@ class UcsmServerVnic(object):
         self._adapter_policy    = None
         self._qos_policy        = None
         self._usnic_message_index = None
+        self._change_usnic_message_index= None
         
         
     @staticmethod
@@ -111,15 +113,20 @@ class UcsmServerVnic(object):
             self._usnic = vnic_default_data["usnic"]
         self._usnic_policy = str(self._usnic) + "_usNIC"
         
-        if "expect usnic" in vnic_data:
-            self._expect_usnic = vnic_data["expect usnic"]
-        else:
-            self._expect_usnic = self._usnic
-        
         if "message" in vnic_data:
             self._usnic_message_index = vnic_data['message']
         else:
             self._usnic_message_index = vnic_default_data['message']
+        
+        if "expect usnic" in vnic_data:
+            self._expect_usnic = vnic_data["expect usnic"]
+            
+        if "change usnic" in vnic_data:
+            self._change_usnic = vnic_data["change usnic"]
+        
+        if "change message" in vnic_data:
+            self._change_usnic_message_index = vnic_data['change message']
+        
             
         if Define.CONFIG:
             self.create_vnic_from_top()
@@ -130,12 +137,19 @@ class UcsmServerVnic(object):
             self.set_adapter_policy()
             self.set_qos_policy()
             self.create_usnic()
+            if self._change_usnic:
+                self.change_usnic()
         
     
     def create_vnic_from_top(self):
         self._ucsm_server.scope_service_profile_from_top()
         cmd = "create vnic " + self._name + " eth-if " + self._vlan_policy + " fabric " + self._fabric
         self._ucsm_server._ssh.send_expect_prompt(cmd)
+        
+        
+    def scope_vnic_from_top(self):
+        self._ucsm_server.scope_service_profile_from_top()
+        self._ucsm_server._ssh.send_expect_prompt("scope vnic " + self._name)
         
         
     def set_order(self):
@@ -171,6 +185,18 @@ class UcsmServerVnic(object):
             raise Exception("Failed to create usnic " + self._usnic_policy)
         
         self._ucsm_server._ssh.send_expect_prompt("exit")
+        
+        
+    def change_usnic(self):
+        self.scope_vnic_from_top()
+        self._logger.info("Deleting old " + self._ucsm_server._service_profile + ", " + self._name + ", " + self._usnic_policy)
+        self._ucsm_server._ssh.send_expect_prompt("delete usnic-conn-policy-ref " + self._usnic_policy)
+        self._ucsm_server.commit()
+        self._usnic = self._change_usnic
+        if self._change_usnic_message_index:
+            self._usnic_message_index = self._change_usnic_message_index
+        self._usnic_policy = str(self._change_usnic) + "_usNIC"
+        self.create_usnic()
         
         
     def set_mac_address(self):

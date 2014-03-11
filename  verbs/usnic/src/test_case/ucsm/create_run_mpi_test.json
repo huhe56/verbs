@@ -1,19 +1,43 @@
 [
 	{
-		"name": "32 usNIC on 2 PF, 16 each",
-		"type": "positive",
-		"np":   "16",
-		"node count": 2,
+		"name": 		"max usNIC on 2 PF then add 1 more to one PF in one adapter",
+		"type": 		"negative",
+		"config only":  "yes",
+		"node count": 	2,
 		"nodes": [
 			{
 				"vnics": [
 					{
-						"vlan": 	10,
-						"usnic":	16
+						"vlan": 		10,
+						"usnic":		58
 					},
 					{
-						"vlan": 	20,
-						"usnic":	16
+						"vlan": 		20,
+						"usnic":		58,
+						"change usnic":	59,
+						"change message": 1
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		58
+					},
+					{
+						"vlan": 		20,
+						"usnic":		58,
+						"change usnic":	59,
+						"change message": 1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		58
+					},
+					{
+						"vlan": 		40,
+						"usnic":		58
 					}
 				]
 			}

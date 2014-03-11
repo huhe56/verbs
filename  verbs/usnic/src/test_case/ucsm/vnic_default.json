@@ -7,6 +7,8 @@
 	"comment": "usnic: max=116 on 1 adapter",
 	"comment": "expect usnic: usnic expected in host, default=usnic",
 	"comment": "qos policy: BestEffort-1500; Platinum-9216",
+	"comment": "change usnic: change usnic without deletion, default=None",
+	"comment": "change message: show config status vnic message after change usnic is configured, default=None",
 	
 	"message 0": "vNIC Config Issues: N/A",
 	"message 1": "vNIC Config Issues: Connection Placement,Insufficient Vnic Capacity",
@@ -22,6 +24,9 @@
 	"qos policy": 		"Platinum-9216",
 	
 	"usnic":		16,
+	"message":		0,
 	"expect usnic": 16,
-	"message":	0
+	"change usnic":	32,
+	"change message": 0
+	
 }
