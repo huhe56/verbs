@@ -95,14 +95,18 @@ class UcsmServer():
     
     
     def get_mac_address(self, vlan):
+        vlan_str = str(vlan)
+        if vlan >= 200:
+            ''' handle 32 PFs case '''
+            vlan_str = hex(vlan).split("x")[1]
         if self._server_type == Define.SERVER_TYPE_BLADE:
             item_chassis = "C" + str(self._chassis_index)
             item_blade   = "B" + str(self._server_index)
-            return ":".join([Define.MAC_PREFIX, item_chassis, item_blade, str(vlan)])
+            return ":".join([Define.MAC_PREFIX, item_chassis, item_blade, vlan_str.upper()])
         else:
             item_chassis = "CC"
             item_rack    = "%02d" % self._server_index
-            return ":".join([Define.MAC_PREFIX, item_chassis, item_rack, str(vlan)])
+            return ":".join([Define.MAC_PREFIX, item_chassis, item_rack, vlan_str.upper()])
     
     
     def get_all_vnics_attributes(self):

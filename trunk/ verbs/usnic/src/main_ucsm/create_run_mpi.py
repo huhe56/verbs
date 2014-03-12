@@ -79,7 +79,7 @@ if __name__ == '__main__':
                     
                 for host in host_list:
                     host.check_usnic_configured_vf()
-                    host.set_host_mtu()
+                    host.set_host_ip_mtu()
                     
                 i = 0
                 min_total_cpu_core_count = 9999999

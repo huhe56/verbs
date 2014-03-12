@@ -82,10 +82,17 @@ class UcsmServerVnic(object):
         if "fabric" in vnic_data:
             self._fabric = vnic_data['fabric']
         else:
-            if (self._vlan/10)%2 == 0:
-                self._fabric = 'b'
+            if self._vlan >= 200:
+                ''' handle 32 PFs case '''
+                if self._vlan % 2 == 0:
+                    self._fabric = 'b'
+                else:
+                    self._fabric = 'a'
             else:
-                self._fabric = 'a'
+                if (self._vlan/10)%2 == 0:
+                    self._fabric = 'b'
+                else:
+                    self._fabric = 'a'
             
         if "mtu" in vnic_data:
             self._mtu = vnic_data["mtu"]
@@ -154,6 +161,9 @@ class UcsmServerVnic(object):
         
     def set_order(self):
         order = int(self._vlan/10) + 1
+        if self._vlan >= 200:
+            ''' handle 32 PFs test case '''
+            order = self._vlan
         self._ucsm_server._ssh.send_expect_prompt("set order " + str(order))
         
         

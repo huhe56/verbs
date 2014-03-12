@@ -4,7 +4,7 @@ Created on Aug 14, 2013
 @author: huhe
 '''
 
-import re, threading, time
+import re, threading, time, socket
 
 from main_ucsm.define import Define
 from main_ucsm.define_mpi import DefineMpi
@@ -108,7 +108,7 @@ class NodeCompute(RedHat):
 
 
     def get_ifconfig_data(self):
-        self._ssh.send_expect_prompt("ifconfig")
+        self._ssh.send_expect_prompt("ifconfig -a")
         output = self._ssh.get_output()
         line_list = output.split("\r\n")
         p_eth = re.compile("(?P<eth>^eth[0-9\.]+)")
@@ -133,17 +133,25 @@ class NodeCompute(RedHat):
         self._logger.debug(self._usnic_eth_list)
         
     
-    def set_host_mtu(self):
-        self._logger.info("setting host mtu if any ...")
+    def set_host_ip_mtu(self):
+        self._logger.info(self._hostname + " setting host mtu if any ...")
         self.get_usnic_status_data()
         self.get_ifconfig_data()
         for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
             vnic_mac = vnic_data.get_mac_address()
             vnic_mtu = vnic_data.get_mtu()
+            vnic_vlan = vnic_data.get_vlan()
             for usnic_index, usnic_status_data in self._usnic_status_dict.items():
                 usnic_mac = usnic_status_data["mac"]
                 usnic_eth = usnic_status_data["eth"]
                 if vnic_mac == usnic_mac:
+                    if vnic_vlan >= 200:
+                        ''' handle 32 PFs case '''
+                        item_list = self._usnic_eth_list["eth0"]["ip"].split(".")
+                        eth_ip = ".".join(["50", item_list[2], str(vnic_vlan), item_list[3]])
+                        #print usnic_eth + ", " + eth_ip
+                        ip_mask = eth_ip + "/24"
+                        self.set_eth_if_ip(usnic_eth, ip_mask)
                     eth_mtu = self._usnic_eth_list[usnic_eth]["mtu"]
                     if vnic_mtu != eth_mtu:
                         self._logger.info(self._hostname + ", " + usnic_eth + ", mtu set from " + str(eth_mtu) + " to " + str(vnic_mtu))
@@ -153,7 +161,7 @@ class NodeCompute(RedHat):
     
         
     def check_usnic_configured_vf(self):
-        self._logger.info("checking host configured vf count ...")
+        self._logger.info(self._hostname + ": checking host configured vf count ...")
         self.get_usnic_status_data()
         for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
             if vnic_data.get_usnic_count():
@@ -230,7 +238,7 @@ class NodeCompute(RedHat):
     
     
     def check_usnic_used_vf(self):
-        self._logger.info("checking host used vf count ...")
+        self._logger.info(self._hostname + " checking host used vf count ...")
         self.get_usnic_status_data()
         for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
             if vnic_data.get_usnic_count():
