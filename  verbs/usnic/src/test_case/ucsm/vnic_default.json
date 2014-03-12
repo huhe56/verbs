@@ -1,5 +1,6 @@
 {
 	"comment": "required: vlan, usnic",
+	"comment": "vlan: if vlan >= 200 then it is for > 4 PFs test, which requires special handling of mac address, fabric and host interface ip address",
 	"comment": "order: default=vlan/10+1",
 	"comment": "name: default=eth-vlan",
 	"comment": "fabric: [a|b|a-b|b-a], default=[a|b],",
