@@ -1,0 +1,425 @@
+[
+	{
+		"name": 	"32 PF and 1 usNIC on each PF",
+		"type": 	"positive",
+		"np":  		"1",
+		"mpi":		"All",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		1
+					},
+					{
+						"vlan": 		40,
+						"usnic":		1
+					},
+					{
+						"vlan": 		205,
+						"usnic":		1
+					},
+					{
+						"vlan": 		206,
+						"usnic":		1
+					},
+					{
+						"vlan": 		207,
+						"usnic":		1
+					},
+					{
+						"vlan": 		208,
+						"usnic":		1
+					},
+					{
+						"vlan": 		209,
+						"usnic":		1
+					},
+					{
+						"vlan": 		210,
+						"usnic":		1
+					},
+					{
+						"vlan": 		211,
+						"usnic":		1
+					},
+					{
+						"vlan": 		212,
+						"usnic":		1
+					},
+					{
+						"vlan": 		213,
+						"usnic":		1
+					},
+					{
+						"vlan": 		214,
+						"usnic":		1
+					},
+					{
+						"vlan": 		215,
+						"usnic":		1
+					},
+					{
+						"vlan": 		216,
+						"usnic":		1
+					},
+					{
+						"vlan": 		217,
+						"usnic":		1
+					},
+					{
+						"vlan": 		218,
+						"usnic":		1
+					},
+					{
+						"vlan": 		219,
+						"usnic":		1
+					},
+					{
+						"vlan": 		220,
+						"usnic":		1
+					},
+					{
+						"vlan": 		221,
+						"usnic":		1
+					},
+					{
+						"vlan": 		222,
+						"usnic":		1
+					},
+					{
+						"vlan": 		223,
+						"usnic":		1
+					},
+					{
+						"vlan": 		224,
+						"usnic":		1
+					},
+					{
+						"vlan": 		225,
+						"usnic":		1
+					},
+					{
+						"vlan": 		226,
+						"usnic":		1
+					},
+					{
+						"vlan": 		227,
+						"usnic":		1
+					},
+					{
+						"vlan": 		228,
+						"usnic":		1
+					},
+					{
+						"vlan": 		229,
+						"usnic":		1
+					},
+					{
+						"vlan": 		230,
+						"usnic":		1
+					},
+					{
+						"vlan": 		231,
+						"usnic":		1
+					},
+					{
+						"vlan": 		232,
+						"usnic":		1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 	"32 PF and 2 usNIC on each PF",
+		"type": 	"positive",
+		"np":  		"2",
+		"mpi":		"All",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		2
+					},
+					{
+						"vlan": 		20,
+						"usnic":		2
+					},
+					{
+						"vlan": 		30,
+						"usnic":		2
+					},
+					{
+						"vlan": 		40,
+						"usnic":		2
+					},
+					{
+						"vlan": 		205,
+						"usnic":		2
+					},
+					{
+						"vlan": 		206,
+						"usnic":		2
+					},
+					{
+						"vlan": 		207,
+						"usnic":		2
+					},
+					{
+						"vlan": 		208,
+						"usnic":		2
+					},
+					{
+						"vlan": 		209,
+						"usnic":		2
+					},
+					{
+						"vlan": 		210,
+						"usnic":		2
+					},
+					{
+						"vlan": 		211,
+						"usnic":		2
+					},
+					{
+						"vlan": 		212,
+						"usnic":		2
+					},
+					{
+						"vlan": 		213,
+						"usnic":		2
+					},
+					{
+						"vlan": 		214,
+						"usnic":		2
+					},
+					{
+						"vlan": 		215,
+						"usnic":		2
+					},
+					{
+						"vlan": 		216,
+						"usnic":		2
+					},
+					{
+						"vlan": 		217,
+						"usnic":		2
+					},
+					{
+						"vlan": 		218,
+						"usnic":		2
+					},
+					{
+						"vlan": 		219,
+						"usnic":		2
+					},
+					{
+						"vlan": 		220,
+						"usnic":		2
+					},
+					{
+						"vlan": 		221,
+						"usnic":		2
+					},
+					{
+						"vlan": 		222,
+						"usnic":		2
+					},
+					{
+						"vlan": 		223,
+						"usnic":		2
+					},
+					{
+						"vlan": 		224,
+						"usnic":		2
+					},
+					{
+						"vlan": 		225,
+						"usnic":		2
+					},
+					{
+						"vlan": 		226,
+						"usnic":		2
+					},
+					{
+						"vlan": 		227,
+						"usnic":		2
+					},
+					{
+						"vlan": 		228,
+						"usnic":		2
+					},
+					{
+						"vlan": 		229,
+						"usnic":		2
+					},
+					{
+						"vlan": 		230,
+						"usnic":		2
+					},
+					{
+						"vlan": 		231,
+						"usnic":		2
+					},
+					{
+						"vlan": 		232,
+						"usnic":		2
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 	"32 PF and 3 usNIC on each PF",
+		"type": 	"positive",
+		"np":  		"3",
+		"mpi":		"All",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		3
+					},
+					{
+						"vlan": 		20,
+						"usnic":		3
+					},
+					{
+						"vlan": 		30,
+						"usnic":		3
+					},
+					{
+						"vlan": 		40,
+						"usnic":		3
+					},
+					{
+						"vlan": 		205,
+						"usnic":		3
+					},
+					{
+						"vlan": 		206,
+						"usnic":		3
+					},
+					{
+						"vlan": 		207,
+						"usnic":		3
+					},
+					{
+						"vlan": 		208,
+						"usnic":		3
+					},
+					{
+						"vlan": 		209,
+						"usnic":		3
+					},
+					{
+						"vlan": 		210,
+						"usnic":		3
+					},
+					{
+						"vlan": 		211,
+						"usnic":		3
+					},
+					{
+						"vlan": 		212,
+						"usnic":		3
+					},
+					{
+						"vlan": 		213,
+						"usnic":		3
+					},
+					{
+						"vlan": 		214,
+						"usnic":		3
+					},
+					{
+						"vlan": 		215,
+						"usnic":		3
+					},
+					{
+						"vlan": 		216,
+						"usnic":		3
+					},
+					{
+						"vlan": 		217,
+						"usnic":		3
+					},
+					{
+						"vlan": 		218,
+						"usnic":		3
+					},
+					{
+						"vlan": 		219,
+						"usnic":		3
+					},
+					{
+						"vlan": 		220,
+						"usnic":		3
+					},
+					{
+						"vlan": 		221,
+						"usnic":		3
+					},
+					{
+						"vlan": 		222,
+						"usnic":		3
+					},
+					{
+						"vlan": 		223,
+						"usnic":		3
+					},
+					{
+						"vlan": 		224,
+						"usnic":		3
+					},
+					{
+						"vlan": 		225,
+						"usnic":		3
+					},
+					{
+						"vlan": 		226,
+						"usnic":		3
+					},
+					{
+						"vlan": 		227,
+						"usnic":		3
+					},
+					{
+						"vlan": 		228,
+						"usnic":		3
+					},
+					{
+						"vlan": 		229,
+						"usnic":		3
+					},
+					{
+						"vlan": 		230,
+						"usnic":		3
+					},
+					{
+						"vlan": 		231,
+						"usnic":		3
+					},
+					{
+						"vlan": 		232,
+						"usnic":		3
+					}
+				]
+			}
+		]
+	}
+]

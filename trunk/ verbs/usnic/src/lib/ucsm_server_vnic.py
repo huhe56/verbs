@@ -179,6 +179,8 @@ class UcsmServerVnic(object):
         
         
     def create_usnic(self):
+        if self._usnic == 0:
+            return
         self._ucsm_server._ssh.send_expect_prompt("create usnic-conn-policy-ref " + self._usnic_policy)
         self._ucsm_server.commit()
         self._ucsm_server._ssh.send_expect_prompt("show detail")

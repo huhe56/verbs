@@ -313,7 +313,7 @@
 		"name": "15 usNIC on one PF, 17 usNIC on another PF, np=18*2",
 		"type": "negative",
 		"np":   "18",
-		"message": [1, 2],
+		"message": [2],
 		"node count": 2,
 		"nodes": [
 			{
@@ -661,6 +661,30 @@
 					{
 						"vlan": 		40,
 						"usnic":		58
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 	"3 PF but only 2 PFs have usNIC",
+		"type": 	"positive",
+		"np":  		"16",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16
 					}
 				]
 			}

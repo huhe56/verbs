@@ -22,7 +22,7 @@ if __name__ == '__main__':
     log = MyLogger.getLogger("create_run_mpi")
     
     path_vnic_default_json_file     = Define.PATH_TEST_CASE_UCSM + "vnic_default.json"
-    path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi_test.json"
+    path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi.json"
     
     vnic_default_data = json.load(open(path_vnic_default_json_file))
     test_case_data = json.load(open(path_create_run_mpi_json_file))
@@ -133,7 +133,8 @@ if __name__ == '__main__':
     for test_case_result in test_result_summary:
         i += 1
         number_str = "%03d" %i
-        result = number_str + ", Passed" if test_case_result["result"] else "Failed"
+        result = "Passed" if test_case_result["result"] else "Failed"
+        result = number_str + ", " + result
         log.info(result + ", " + test_case_result["type"] + ", " + test_case_result['name'])
         
         

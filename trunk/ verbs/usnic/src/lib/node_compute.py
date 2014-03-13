@@ -164,7 +164,7 @@ class NodeCompute(RedHat):
         self._logger.info(self._hostname + ": checking host configured vf count ...")
         self.get_usnic_status_data()
         for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
-            if vnic_data.get_usnic_count():
+            if vnic_data.get_usnic_count() > 0:
                 match = False
                 vnic_mac = vnic_data.get_mac_address()
                 vnic_usnic_count = vnic_data.get_usnic_count()
@@ -241,7 +241,7 @@ class NodeCompute(RedHat):
         self._logger.info(self._hostname + " checking host used vf count ...")
         self.get_usnic_status_data()
         for vnic_name, vnic_data in self._ucsm_server_vnic_dict.items():
-            if vnic_data.get_usnic_count():
+            if vnic_data.get_usnic_count() > 0:
                 match_mac = False
                 vnic_mac = vnic_data.get_mac_address()
                 vnic_usnic_count = vnic_data.get_usnic_count()
