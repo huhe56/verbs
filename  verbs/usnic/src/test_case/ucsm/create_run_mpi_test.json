@@ -1,140 +1,23 @@
 [
 	{
-		"name": 	"32 PF and 1 usNIC on each PF",
+		"name": 	"3 PF but only 2 PFs have usNIC",
 		"type": 	"positive",
-		"np":  		"1",
-		"mpi":		"All",
+		"np":  		"16",
 		"node count": 	2,
 		"nodes": [
 			{
 				"vnics": [
 					{
 						"vlan": 		10,
-						"usnic":		1
+						"usnic":		0
 					},
 					{
 						"vlan": 		20,
-						"usnic":		1
+						"usnic":		16
 					},
 					{
 						"vlan": 		30,
-						"usnic":		1
-					},
-					{
-						"vlan": 		40,
-						"usnic":		1
-					},
-					{
-						"vlan": 		205,
-						"usnic":		1
-					},
-					{
-						"vlan": 		206,
-						"usnic":		1
-					},
-					{
-						"vlan": 		207,
-						"usnic":		1
-					},
-					{
-						"vlan": 		208,
-						"usnic":		1
-					},
-					{
-						"vlan": 		209,
-						"usnic":		1
-					},
-					{
-						"vlan": 		210,
-						"usnic":		1
-					},
-					{
-						"vlan": 		211,
-						"usnic":		1
-					},
-					{
-						"vlan": 		212,
-						"usnic":		1
-					},
-					{
-						"vlan": 		213,
-						"usnic":		1
-					},
-					{
-						"vlan": 		214,
-						"usnic":		1
-					},
-					{
-						"vlan": 		215,
-						"usnic":		1
-					},
-					{
-						"vlan": 		216,
-						"usnic":		1
-					},
-					{
-						"vlan": 		217,
-						"usnic":		1
-					},
-					{
-						"vlan": 		218,
-						"usnic":		1
-					},
-					{
-						"vlan": 		219,
-						"usnic":		1
-					},
-					{
-						"vlan": 		220,
-						"usnic":		1
-					},
-					{
-						"vlan": 		221,
-						"usnic":		1
-					},
-					{
-						"vlan": 		222,
-						"usnic":		1
-					},
-					{
-						"vlan": 		223,
-						"usnic":		1
-					},
-					{
-						"vlan": 		224,
-						"usnic":		1
-					},
-					{
-						"vlan": 		225,
-						"usnic":		1
-					},
-					{
-						"vlan": 		226,
-						"usnic":		1
-					},
-					{
-						"vlan": 		227,
-						"usnic":		1
-					},
-					{
-						"vlan": 		228,
-						"usnic":		1
-					},
-					{
-						"vlan": 		229,
-						"usnic":		1
-					},
-					{
-						"vlan": 		230,
-						"usnic":		1
-					},
-					{
-						"vlan": 		231,
-						"usnic":		1
-					},
-					{
-						"vlan": 		232,
-						"usnic":		1
+						"usnic":		16
 					}
 				]
 			}
