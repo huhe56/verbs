@@ -37,6 +37,7 @@ class UcsmServerVnic(object):
         self._qos_policy        = None
         self._usnic_message_index = None
         self._change_usnic_message_index= None
+        self._qp = 2
         
         
     @staticmethod
@@ -118,7 +119,16 @@ class UcsmServerVnic(object):
             self._usnic = vnic_data["usnic"]
         else:
             self._usnic = vnic_default_data["usnic"]
-        self._usnic_policy = str(self._usnic) + "_usNIC"
+        
+        if "qp" in vnic_data:
+            self._qp = vnic_data["qp"]
+        else:
+            self._qp = vnic_default_data["qp"]
+            
+        if self._qp == 1:
+            self._usnic_policy = str(self._usnic) + "_usNIC_1_QP"
+        else:
+            self._usnic_policy = str(self._usnic) + "_usNIC"
         
         if "message" in vnic_data:
             self._usnic_message_index = vnic_data['message']

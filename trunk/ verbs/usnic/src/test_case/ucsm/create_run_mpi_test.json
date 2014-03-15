@@ -1,23 +1,23 @@
 [
 	{
-		"name": 	"3 PF but only 2 PFs have usNIC",
-		"type": 	"positive",
-		"np":  		"16",
+		"name": 		"VF sharing, 2 PF, 17 VF/PF, 2 QP/VF, 2 Node, 34 np, bind to none",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"bind to none":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message": 		[0],
 		"node count": 	2,
 		"nodes": [
 			{
 				"vnics": [
 					{
 						"vlan": 		10,
-						"usnic":		0
+						"usnic":		17
 					},
 					{
 						"vlan": 		20,
-						"usnic":		16
-					},
-					{
-						"vlan": 		30,
-						"usnic":		16
+						"usnic":		17
 					}
 				]
 			}
