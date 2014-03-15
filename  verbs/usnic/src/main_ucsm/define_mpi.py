@@ -23,6 +23,7 @@ class DefineMpi:
     MPI_PARAM_VF_USED_COUNT_LIST    = "vf_used_count_list"
     MPI_PARAM_TIMEOUT               = "timeout"
     MPI_PARAM_HOST_LIST             = "host_list"
+    MPI_PARAM_BIND_TO_NONE          = "bind_to_none"
     
     MPI_PARAM_HOST      = "--host"
     
@@ -31,6 +32,8 @@ class DefineMpi:
     
     MPI_PARAM_MCA       = "--mca"
     MPI_MCA_DEFAULT     = "btl usnic,sm,self"
+    
+    MPI_BIND_TO_NONE  = "--bind-to-none"
     
     MPI_MCA_INCLUDE_USNIC_PREFIX    = "btl_usnic_include usnic_"
     MPI_MCA_INCLUDE_ETH_PREFIX      = "btl_usnic_include eth"

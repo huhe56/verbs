@@ -5,11 +5,12 @@
 	"comment": "name: default=eth-vlan",
 	"comment": "fabric: [a|b|a-b|b-a], default=[a|b],",
 	"comment": "default=blade: 00:25:B5:C1:B2:10, rack: 00:25:B5:CC:06:10",
-	"comment": "usnic: max=116 on 1 adapter",
+	"comment": "usnic: max=116 on 1 adapter; 0=no usnic, default=16",
 	"comment": "expect usnic: usnic expected in host, default=usnic",
 	"comment": "qos policy: BestEffort-1500; Platinum-9216",
 	"comment": "change usnic: change usnic without deletion, default=None",
 	"comment": "change message: show config status vnic message after change usnic is configured, default=None",
+	"comment": "qp: [1|2], default=2",
 	
 	"message 0": "vNIC Config Issues: N/A",
 	"message 1": "vNIC Config Issues: Connection Placement,Insufficient Vnic Capacity",
@@ -28,6 +29,7 @@
 	"message":		0,
 	"expect usnic": 16,
 	"change usnic":	32,
-	"change message": 0
+	"change message": 0,
+	"qp":	2
 	
 }

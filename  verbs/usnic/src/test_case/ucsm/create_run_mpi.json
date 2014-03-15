@@ -6,6 +6,8 @@
 		"comment": "np: string of ['0-9'+|'+1'|'-1'], default=min cpu cure in the cluster",
 		"comment": "mpi: [mpi test suite], default=Alltoall; ",
 		"comment": "message: list of message index, default=[0]",
+		"comment": "vf sharing: [true|false], default=true",
+		"comment": "bind to none: [true|false], default=false",
 		
 		"message 0": "All processes entering MPI_Finalize",
 		"message 1": "not enough usNIC",

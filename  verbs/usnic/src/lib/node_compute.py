@@ -31,6 +31,7 @@ class NodeCompute(RedHat):
         self._total_cpu_core_count = None
         self._np = None
         self._min_total_cpu_core_count = None
+        self._vf_sharing = True
 
     @staticmethod
     def wait_for_node_to_boot_up(node_ip):
@@ -54,6 +55,23 @@ class NodeCompute(RedHat):
                 time.sleep(interval)
         raise Exception("Failed to ssh to " + node_ip + " for " + probe_max_count + " times")
             
+
+    def set_vf_sharing(self, vf_sharing):
+        self._vf_sharing = vf_sharing
+        self._ssh.send("su -")
+        self._ssh.expect("assword: ")
+        self._ssh.send_expect_prompt(Define.NODE_DEFAULT_PASSWORD)
+        cmd = None
+        if self._vf_sharing:
+            self._logger.info(self._hostname + ", setting vf sharing")
+            cmd = "echo 1 > /sys/module/usnic_verbs/parameters/usnic_ib_share_vf"
+        else:
+            self._logger.info(self._hostname + ", setting vf not sharing")
+            cmd = "echo 0 > /sys/module/usnic_verbs/parameters/usnic_ib_share_vf"
+        self._ssh.send_expect_prompt(cmd)
+        self._ssh.send_expect_prompt("cat /sys/module/usnic_verbs/parameters/usnic_ib_share_vf")
+        self._ssh.send_expect_prompt("exit")
+        
 
     def set_min_total_cpu_core_count(self, count):
         self._min_total_cpu_core_count = count
@@ -253,7 +271,7 @@ class NodeCompute(RedHat):
                     usnic_vf_configured_count = usnic_status_data["vf configured count"]
                     usnic_vf_used_count = usnic_status_data["vf used count"]
                     
-                    if not expected_vf_used_count:
+                    if expected_vf_used_count == None:
                         expected_vf_used_count = 0 if vnic_usnic_count < self._np else self._np
                     
                     vnic_str = "vnic " + vnic_name + " mac [" + vnic_mac + "], usnic configured count [" + str(vnic_usnic_count) +"], expect used count [" + str(expected_vf_used_count) + "]"
@@ -297,6 +315,7 @@ class NodeCompute(RedHat):
         host_list = None
         msg_list = None
         mca = DefineMpi.MPI_MCA_DEFAULT 
+        bind_to_none = False
         
         key_list = param_dictionary.keys()
         if DefineMpi.MPI_PARAM_HOST_LIST in key_list:
@@ -309,6 +328,8 @@ class NodeCompute(RedHat):
             cmd = param_dictionary[DefineMpi.MPI_PARAM_CMD]
         if DefineMpi.MPI_PARAM_MSG in key_list:
             msg_list = param_dictionary[DefineMpi.MPI_PARAM_MSG]
+        if DefineMpi.MPI_PARAM_BIND_TO_NONE in key_list:
+            bind_to_none = param_dictionary[DefineMpi.MPI_PARAM_BIND_TO_NONE]
             
         np = None
         total_np = None
@@ -330,9 +351,10 @@ class NodeCompute(RedHat):
         
         host_name_list = [host.get_host_name() for host in host_list]
         host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_name_list)])
+        bind_to_none_str = "" if not bind_to_none else DefineMpi.MPI_BIND_TO_NONE
         np_str   = " ".join([DefineMpi.MPI_PARAM_NP, str(total_np)])
         mca_str  = " ".join([DefineMpi.MPI_PARAM_MCA, mca])
-        cmd_str  = " ".join(["mpirun", host_str, np_str, mca_str, DefineMpi.MPI_PATH, cmd])
+        cmd_str  = " ".join(["mpirun", host_str, bind_to_none_str, np_str, mca_str, DefineMpi.MPI_PATH, cmd])
         
         self._logger.info(cmd_str)
         self._logger.debug("timeout: " + str(timeout))

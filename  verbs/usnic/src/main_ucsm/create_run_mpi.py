@@ -22,7 +22,7 @@ if __name__ == '__main__':
     log = MyLogger.getLogger("create_run_mpi")
     
     path_vnic_default_json_file     = Define.PATH_TEST_CASE_UCSM + "vnic_default.json"
-    path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi.json"
+    path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi_test.json"
     
     vnic_default_data = json.load(open(path_vnic_default_json_file))
     test_case_data = json.load(open(path_create_run_mpi_json_file))
@@ -40,6 +40,8 @@ if __name__ == '__main__':
             log.info("")
             test_case_name = test_case['name']
             test_case_type = test_case['type'] if 'type' in test_case else DefineMpi.TEST_TYPE_POSITIVE
+            vf_sharing  = test_case['vf sharing'] if 'vf sharing' in test_case else True
+            bind_to_none = test_case['bind to none'] if 'bind to none' in test_case else False
             node_count = test_case['node count']
             node_list = test_case['nodes']
             np = test_case['np'] if 'np' in test_case else None
@@ -93,12 +95,14 @@ if __name__ == '__main__':
                     
                 for host in host_list:
                     host.set_min_total_cpu_core_count(min_total_cpu_core_count)
+                    host.set_vf_sharing(vf_sharing)
                     
                 param_dictionary = {
                                 DefineMpi.MPI_PARAM_CMD: mpi,
                                 DefineMpi.MPI_PARAM_NP: np,
                                 DefineMpi.MPI_PARAM_HOST_LIST: host_list,
                                 DefineMpi.MPI_PARAM_MSG: message_list,
+                                DefineMpi.MPI_PARAM_BIND_TO_NONE: bind_to_none,
                                 }
                 ret = host_list[0].run_mpi(param_dictionary, test_case_type)
                 
