@@ -625,7 +625,7 @@
 		]
 	},
 	{
-		"name": 		"max usNIC on 2 PF then add 1 more to one PF in one adapter",
+		"name": 		"max usNIC on 2 PF then add 1 more to one PF in one adapter, it fails now and it is a defect",
 		"type": 		"negative",
 		"config only":  "yes",
 		"node count": 	2,
