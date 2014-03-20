@@ -693,100 +693,6 @@
 		]
 	},
 	{
-		"name": 		"VF sharing, 2 PF, 16 VF/PF, 2 QP/VF, 2 Node, 32 np",
-		"type": 		"positive",
-		"vf sharing":	true,
-		"np":  			"16",
-		"mpi":			"Alltoall",
-		"node count": 	2,
-		"nodes": [
-			{
-				"vnics": [
-					{
-						"vlan": 		10,
-						"usnic":		16
-					},
-					{
-						"vlan": 		20,
-						"usnic":		16
-					}
-				]
-			}
-		]
-	},
-	{
-		"name": 		"VF sharing, 2 PF, 15 VF/PF, 2 QP/VF, 2 Node, 32 np",
-		"type": 		"negative",
-		"vf sharing":	true,
-		"np":  			"16",
-		"mpi":			"Alltoall",
-		"message": 		[1],
-		"node count": 	2,
-		"nodes": [
-			{
-				"vnics": [
-					{
-						"vlan": 		10,
-						"usnic":		15
-					},
-					{
-						"vlan": 		20,
-						"usnic":		15
-					}
-				]
-			}
-		]
-	},
-	{
-		"name": 		"VF sharing, 2 PF, 17 VF/PF, 2 QP/VF, 2 Node, 34 np",
-		"type": 		"negative",
-		"vf sharing":	true,
-		"np":  			"17",
-		"mpi":			"Alltoall",
-		"message": 		[2],
-		"node count": 	2,
-		"nodes": [
-			{
-				"vnics": [
-					{
-						"vlan": 		10,
-						"usnic":		17,
-						"expect usnic":	0
-					},
-					{
-						"vlan": 		20,
-						"usnic":		17,
-						"expect usnic": 0
-					}
-				]
-			}
-		]
-	},
-	{
-		"name": 		"VF sharing, 2 PF, 17 VF/PF, 2 QP/VF, 2 Node, 34 np, bind to none",
-		"type": 		"positive",
-		"vf sharing":	true,
-		"bind to none":	true,
-		"np":  			"17",
-		"mpi":			"Alltoall",
-		"message": 		[0],
-		"node count": 	2,
-		"nodes": [
-			{
-				"vnics": [
-					{
-						"vlan": 		10,
-						"usnic":		17
-					},
-					{
-						"vlan": 		20,
-						"usnic":		17
-					}
-				]
-			}
-		]
-	},
-	{
 		"name": 	"32 PF and 1 usNIC on each PF",
 		"type": 	"positive",
 		"np":  		"1",
@@ -1204,6 +1110,868 @@
 					{
 						"vlan": 		232,
 						"usnic":		3
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, 2 PF, 16 VF/PF, 2 QP/VF, 2 Node, 32 np",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, 2 PF, 15 VF/PF, 2 QP/VF, 2 Node, 32 np",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message": 		[1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		15
+					},
+					{
+						"vlan": 		20,
+						"usnic":		15
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, 2 PF, 17 VF/PF, 2 QP/VF, 2 Node, 34 np",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message": 		[2],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		17,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		17,
+						"expect usnic": 0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, 2 PF, 17 VF/PF, 2 QP/VF, 2 Node, 34 np, bind to none",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"bind to none":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message": 		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		17
+					},
+					{
+						"vlan": 		20,
+						"usnic":		17
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 2PQ/VF, PF1=16VF, PF2=32VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message": 		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		32
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=34, 2PQ/VF, PF1=16VF, PF2=32VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message": 		[2],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		32,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=30, 2PQ/VF, PF1=15VF, PF2=32VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		15,
+						"expect usnic":	15
+					},
+					{
+						"vlan": 		20,
+						"usnic":		32,
+						"expect usnic":	15
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 2PQ/VF, PF1=15VF, PF2=32VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[0, 1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		15,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		32,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 1PQ/VF, PF1=32VF, PF2=32VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		32,
+						"expect usnic":	32,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		32,
+						"expect usnic":	32,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=34, 1PQ/VF, PF1=32VF, PF2=32VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message":		[2],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		32,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		32,
+						"expect usnic":	0,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=30, 1PQ/VF, PF1=30VF, PF2=30VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 1PQ/VF, PF1=30VF, PF2=30VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	0,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=30, PF1=1QP/VF, 30VF; PF2=2QP/VF, 15VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		15,
+						"expect usnic":	15,
+						"qp":			2
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, PF1=1QP/VF, 30VF; PF2=2QP/VF, 15VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		15,
+						"expect usnic":	0,
+						"qp":			2
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 4PF, 16VF/PF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=34, 4PF, 16VF/PF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message":		[2],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 4PF, 16VF/PF, 1QP/VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF not sharing, np=30, 2PF, 30VF/PF, 2QP/VF",
+		"type": 		"positive",
+		"vf sharing":	false,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	30
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	30
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF not sharing, np=32, 2PF, 30VF/PF, 2QP/VF",
+		"type": 		"negative",
+		"vf sharing":	false,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[4],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF not sharing, np=30, 2PF, 30VF/PF, 1QP/VF",
+		"type": 		"positive",
+		"vf sharing":	false,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF not sharing, np=32, 2PF, 30VF/PF, 1QP/VF",
+		"type": 		"negative",
+		"vf sharing":	false,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[1, 5],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	0,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	0,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=32, 4PF, 30VF/PF, 2QP/VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"16",
+		"mpi":			"Alltoall",
+		"message":		[1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		15,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		15,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		15,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		15,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=34, 4PF, 37VF/PF, 2QP/VF, bind to none",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"bind to none":	true,
+		"np":  			"17",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		17,
+						"expect usnic":	17
+					},
+					{
+						"vlan": 		20,
+						"usnic":		17,
+						"expect usnic":	17
+					},
+					{
+						"vlan": 		30,
+						"usnic":		17,
+						"expect usnic":	17
+					},
+					{
+						"vlan": 		40,
+						"usnic":		17,
+						"expect usnic":	17
+					}
+				]
+			},
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		17,
+						"expect usnic":	17
+					},
+					{
+						"vlan": 		20,
+						"usnic":		17,
+						"expect usnic":	17
+					},
+					{
+						"vlan": 		30,
+						"usnic":		17,
+						"expect usnic":	17
+					},
+					{
+						"vlan": 		40,
+						"usnic":		17,
+						"expect usnic":	17
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=30, 3PF, 30VF/PF, 1QP/VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		30,
+						"expect usnic":	30,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=28, 4PF, 28VF/PF, 1QP/VF",
+		"type": 		"positive",
+		"vf sharing":	true,
+		"np":  			"14",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					},
+					{
+						"vlan": 		40,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF sharing, np=30, 4PF, 28VF/PF, 1QP/VF",
+		"type": 		"negative",
+		"vf sharing":	true,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[1],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					},
+					{
+						"vlan": 		20,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					},
+					{
+						"vlan": 		30,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					},
+					{
+						"vlan": 		40,
+						"usnic":		28,
+						"expect usnic":	28,
+						"qp":			1
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF not sharing, np=30, 4PF, 28VF/PF, 2QP/VF",
+		"type": 		"negative",
+		"vf sharing":	false,
+		"np":  			"15",
+		"mpi":			"Alltoall",
+		"message":		[4],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		28,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		28,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		28,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		28,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"VF not sharing, np=28, 4PF, 28VF/PF, 2QP/VF",
+		"type": 		"positive",
+		"vf sharing":	false,
+		"np":  			"14",
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		28,
+						"expect usnic":	28
+					},
+					{
+						"vlan": 		20,
+						"usnic":		28,
+						"expect usnic":	28
+					},
+					{
+						"vlan": 		30,
+						"usnic":		28,
+						"expect usnic":	28
+					},
+					{
+						"vlan": 		40,
+						"usnic":		28,
+						"expect usnic":	28
 					}
 				]
 			}
