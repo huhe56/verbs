@@ -1,24 +1,34 @@
 [
 	{
-		"name": 		"VF not sharing, np=32, 2PF, 30VF/PF, 2QP/VF",
-		"type": 		"negative",
+		"name": 		"VF not sharing, np=28, 4PF, 28VF/PF, 2QP/VF",
+		"type": 		"positive",
 		"vf sharing":	false,
-		"np":  			"16",
+		"np":  			"14",
 		"mpi":			"Alltoall",
-		"message":		[4],
+		"message":		[0],
 		"node count": 	2,
 		"nodes": [
 			{
 				"vnics": [
 					{
 						"vlan": 		10,
-						"usnic":		30,
-						"expect usnic":	0
+						"usnic":		28,
+						"expect usnic":	28
 					},
 					{
 						"vlan": 		20,
-						"usnic":		30,
-						"expect usnic":	0
+						"usnic":		28,
+						"expect usnic":	28
+					},
+					{
+						"vlan": 		30,
+						"usnic":		28,
+						"expect usnic":	28
+					},
+					{
+						"vlan": 		40,
+						"usnic":		28,
+						"expect usnic":	28
 					}
 				]
 			}

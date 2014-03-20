@@ -22,7 +22,7 @@ if __name__ == '__main__':
     log = MyLogger.getLogger("create_run_mpi")
     
     path_vnic_default_json_file     = Define.PATH_TEST_CASE_UCSM + "vnic_default.json"
-    path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi_test.json"
+    path_create_run_mpi_json_file   = Define.PATH_TEST_CASE_UCSM + "create_run_mpi_all.json"
     
     vnic_default_data = json.load(open(path_vnic_default_json_file))
     test_case_data = json.load(open(path_create_run_mpi_json_file))
