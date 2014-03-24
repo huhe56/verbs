@@ -1,9 +1,9 @@
 [
 	{
-		"name": 		"VF not sharing, np=28, 4PF, 28VF/PF, 2QP/VF",
+		"name": 		"exclude btl_usnic_if_exclude 50.42.30.0/24,50.42.20.0/24,50.42.40.0/24",
 		"type": 		"positive",
-		"vf sharing":	false,
-		"np":  			"14",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude 50.42.30.0/24,50.42.20.0/24,50.42.40.0/24", 
 		"mpi":			"Alltoall",
 		"message":		[0],
 		"node count": 	2,
@@ -12,23 +12,23 @@
 				"vnics": [
 					{
 						"vlan": 		10,
-						"usnic":		28,
-						"expect usnic":	28
+						"usnic":		16,
+						"expect usnic":	16
 					},
 					{
 						"vlan": 		20,
-						"usnic":		28,
-						"expect usnic":	28
+						"usnic":		16,
+						"expect usnic":	0
 					},
 					{
 						"vlan": 		30,
-						"usnic":		28,
-						"expect usnic":	28
+						"usnic":		16,
+						"expect usnic":	0
 					},
 					{
 						"vlan": 		40,
-						"usnic":		28,
-						"expect usnic":	28
+						"usnic":		16,
+						"expect usnic":	0
 					}
 				]
 			}
