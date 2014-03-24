@@ -1,0 +1,492 @@
+[
+	{
+		"name": 		"include btl_usnic_if_include usnic_0",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include usnic_0", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include usnic_3,usnic_1",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include usnic_3,usnic_1", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include usnic_0,usnic_2,usnic_1",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include usnic_0,usnic_2,usnic_1", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include usnic_0,usnic_1,usnic_2,usnic_3",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include usnic_0,usnic_1,usnic_2,usnic_3", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include 50.42.10.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include 50.42.10.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include 50.42.20.0/24,50.42.40.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include 50.42.20.0/24,50.42.40.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include 50.42.30.0/24,50.42.20.0/24,50.42.40.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include 50.42.30.0/24,50.42.20.0/24,50.42.40.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"include btl_usnic_if_include 50.42.10.0/24,50.42.30.0/24,50.42.20.0/24,50.42.40.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_include 50.42.10.0/24,50.42.30.0/24,50.42.20.0/24,50.42.40.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude usnic_0",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude usnic_0", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude usnic_3,usnic_1",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude usnic_3,usnic_1", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude usnic_3,usnic_1,usnic_0",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude usnic_3,usnic_1,usnic_0", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude 50.42.30.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude 50.42.30.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude 50.42.20.0/24,50.42.40.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude 50.42.20.0/24,50.42.40.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude 50.42.30.0/24,50.42.20.0/24,50.42.40.0/24",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude 50.42.30.0/24,50.42.20.0/24,50.42.40.0/24", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	16
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	0
+					}
+				]
+			}
+		]
+	}
+]

@@ -353,7 +353,7 @@ class NodeCompute(RedHat):
         host_str = " ".join([DefineMpi.MPI_PARAM_HOST, ",".join(host_name_list)])
         bind_to_none_str = "" if not bind_to_none else DefineMpi.MPI_BIND_TO_NONE
         np_str   = " ".join([DefineMpi.MPI_PARAM_NP, str(total_np)])
-        mca_str  = " ".join([DefineMpi.MPI_PARAM_MCA, mca])
+        mca_str  = " ".join([DefineMpi.MPI_PARAM_MCA, mca]) if mca else ""
         cmd_str  = " ".join(["mpirun", host_str, bind_to_none_str, np_str, mca_str, DefineMpi.MPI_PATH, cmd])
         
         self._logger.info(cmd_str)

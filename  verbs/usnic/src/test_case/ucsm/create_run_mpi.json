@@ -691,5 +691,40 @@
 				]
 			}
 		]
+	},
+	{
+		"name": 		"exclude btl_usnic_if_exclude usnic_0,usnic_2,usnic_1",
+		"type": 		"positive",
+		"np":  			"16",
+		"mca":			"btl_usnic_if_exclude usnic_0,usnic_2,usnic_1", 
+		"mpi":			"Alltoall",
+		"message":		[0],
+		"node count": 	2,
+		"nodes": [
+			{
+				"vnics": [
+					{
+						"vlan": 		10,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		20,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		30,
+						"usnic":		16,
+						"expect usnic":	0
+					},
+					{
+						"vlan": 		40,
+						"usnic":		16,
+						"expect usnic":	16
+					}
+				]
+			}
+		]
 	}
 ]

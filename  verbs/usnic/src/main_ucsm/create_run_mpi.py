@@ -46,6 +46,7 @@ if __name__ == '__main__':
             node_list = test_case['nodes']
             np = test_case['np'] if 'np' in test_case else None
             config_only = test_case['config only'] if 'config only' in test_case else None
+            mca = test_case['mca'] if 'mca' in test_case else DefineMpi.MPI_MCA_DEFAULT 
             mpi = test_case['mpi'] if 'mpi' in test_case else DefineMpi.MPI_CMD_DEFAULT
             message_list = test_case['message'] if 'message' in test_case else [0]
             
@@ -103,6 +104,7 @@ if __name__ == '__main__':
                                 DefineMpi.MPI_PARAM_HOST_LIST: host_list,
                                 DefineMpi.MPI_PARAM_MSG: message_list,
                                 DefineMpi.MPI_PARAM_BIND_TO_NONE: bind_to_none,
+                                DefineMpi.MPI_PARAM_MCA: mca,
                                 }
                 ret = host_list[0].run_mpi(param_dictionary, test_case_type)
                 
